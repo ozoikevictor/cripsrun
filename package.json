@@ -1,0 +1,14 @@
+{
+  "name": "cripsron",
+  "private": true,
+  "scripts": {
+    "dev": "npm --prefix frontend run dev",
+    "frontend": "npm --prefix frontend run dev",
+    "backend": "npm --prefix backend run dev",
+    "dev:frontend": "npm --prefix frontend run dev",
+    "dev:backend": "npm --prefix backend run dev",
+    "build": "npm --prefix frontend run build",
+    "type-check": "npm --prefix frontend run type-check && npm --prefix backend run type-check"
+  }
+}
+

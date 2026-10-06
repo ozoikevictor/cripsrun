@@ -1,0 +1,98 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ── Helper functions ──────────────────────────────────────────────────────
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function isAdmin() {
+      return isAuthenticated() &&
+             request.auth.token.role == 'admin';
+    }
+
+    // ── Users ─────────────────────────────────────────────────────────────────
+    match /users/{userId} {
+      allow read: if isOwner(userId) || isAdmin();
+      allow create: if isOwner(userId);
+      allow update: if isOwner(userId) && !('role' in request.resource.data);
+      allow delete: if false; // Never hard-delete users
+
+      // Addresses
+      match /addresses/{addressId} {
+        allow read, write: if isOwner(userId) || isAdmin();
+      }
+
+      // Cart
+      match /cart_items/{cartItemId} {
+        allow read, write: if isOwner(userId);
+      }
+    }
+
+    // ── Categories ────────────────────────────────────────────────────────────
+    match /categories/{categoryId} {
+      allow read: if true;  // Public catalog browsing
+      allow write: if isAdmin();
+    }
+
+    // ── Products ──────────────────────────────────────────────────────────────
+    match /products/{productId} {
+      allow read: if resource.data.is_active == true || isAdmin();
+      allow write: if isAdmin();
+
+      match /delivery_days/{dayId} {
+        allow read: if true;
+        allow write: if isAdmin();
+      }
+    }
+
+    // ── Orders ────────────────────────────────────────────────────────────────
+    match /orders/{orderId} {
+      allow read: if isAdmin() || (isAuthenticated() && resource.data.user_id == request.auth.uid);
+      allow create: if isAuthenticated();
+      // Customers cannot update orders directly — all transitions go through API
+      allow update: if isAdmin();
+      allow delete: if false;
+
+      match /items/{itemId} {
+        allow read: if isAdmin() || (isAuthenticated() && get(/databases/$(database)/documents/orders/$(orderId)).data.user_id == request.auth.uid);
+        allow write: if false; // Written by server only
+      }
+
+      match /status_history/{entryId} {
+        allow read: if isAdmin() || (isAuthenticated() && get(/databases/$(database)/documents/orders/$(orderId)).data.user_id == request.auth.uid);
+        allow write: if false; // Written by server only
+      }
+
+      match /notifications/{notifId} {
+        allow read: if isAdmin();
+        allow write: if false; // Written by server only
+      }
+    }
+
+    // ── Delivery Zones ────────────────────────────────────────────────────────
+    match /delivery_zones/{zoneId} {
+      // Customers can read active zones (for zone detection at checkout)
+      // But NEVER expose logistics_cost — handled by server-side API only
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // ── Revenue Records ───────────────────────────────────────────────────────
+    match /revenue_records/{recordId} {
+      allow read: if isAdmin();
+      allow write: if false; // Written by server only
+    }
+
+    // ── Config ────────────────────────────────────────────────────────────────
+    match /config/{configId} {
+      allow read: if isAuthenticated(); // Customers need pricing config
+      allow write: if isAdmin();
+    }
+  }
+}
