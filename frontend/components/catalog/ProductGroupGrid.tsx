@@ -241,7 +241,7 @@ export function ProductGroupGrid({ products }: ProductGroupGridProps) {
   }
 
   return (
-    <div className="space-y-5">
+    <div className="mx-auto max-w-5xl space-y-3 md:space-y-4">
       {groups.map(({ family, products: groupProducts }) => {
         const isOpen = openGroups[family.id] ?? groups.length === 1;
         const leadProduct = groupProducts[0];
@@ -250,11 +250,11 @@ export function ProductGroupGrid({ products }: ProductGroupGridProps) {
         return (
           <section
             key={family.id}
-            className="overflow-hidden rounded-2xl border border-white/10 bg-white/95 text-crisp-950 shadow-sm transition-shadow hover:shadow-md"
+            className="overflow-hidden rounded-xl border border-white/10 bg-white/95 text-crisp-950 shadow-sm transition-shadow hover:shadow-md"
           >
             <button
               type="button"
-              className="flex w-full items-center gap-4 p-4 text-left transition-colors hover:bg-crisp-50/70 md:p-5"
+              className="flex w-full items-center gap-3 p-3 text-left transition-colors hover:bg-crisp-50/70 md:gap-4 md:p-4"
               onClick={() =>
                 setOpenGroups((current) => ({
                   ...current,
@@ -262,7 +262,7 @@ export function ProductGroupGrid({ products }: ProductGroupGridProps) {
                 }))
               }
             >
-              <div className="relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-xl bg-muted md:h-24 md:w-24">
+              <div className="relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-lg bg-muted md:h-20 md:w-20">
                 {image ? (
                   <Image
                     src={image}
@@ -281,13 +281,13 @@ export function ProductGroupGrid({ products }: ProductGroupGridProps) {
 
               <div className="min-w-0 flex-1">
                 <div className="flex flex-wrap items-center gap-2">
-                  <h3 className="text-xl font-bold md:text-2xl">{family.label}</h3>
+                  <h3 className="text-lg font-bold md:text-xl">{family.label}</h3>
                   <span className="rounded-full bg-crisp-100 px-2.5 py-1 text-xs font-semibold text-primary">
                     {groupProducts.length} option
                     {groupProducts.length === 1 ? '' : 's'}
                   </span>
                 </div>
-                <p className="mt-1 line-clamp-2 text-sm text-muted-foreground">
+                <p className="mt-1 line-clamp-2 text-sm leading-5 text-muted-foreground md:max-w-2xl">
                   {family.description}
                 </p>
               </div>
@@ -311,7 +311,7 @@ export function ProductGroupGrid({ products }: ProductGroupGridProps) {
             </button>
 
             {isOpen && (
-              <div className="border-t bg-gradient-to-b from-crisp-50/70 to-white p-4 md:p-5">
+              <div className="border-t bg-gradient-to-b from-crisp-50/70 to-white p-3 md:p-4">
                 <div className="mb-4 flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
                   <div>
                     <p className="text-base font-semibold">Choose exact item</p>
@@ -335,7 +335,7 @@ export function ProductGroupGrid({ products }: ProductGroupGridProps) {
                   </Button>
                 </div>
 
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                   {groupProducts.map((product) => (
                     <ProductCard key={product.id} product={product} />
                   ))}
