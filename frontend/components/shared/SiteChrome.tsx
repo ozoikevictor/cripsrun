@@ -22,7 +22,7 @@ function ChromeContent({ children }: { children: React.ReactNode }) {
   const hideFooter =
     pathname.startsWith('/checkout') ||
     pathname.startsWith('/cart') ||
-    /^\/orders\/[^/]+/.test(pathname) ||
+    /^\/(orders|account|notifications)(\/|$)/.test(pathname) ||
     pathname.startsWith('/track/');
 
   if (isPlainPage) {
