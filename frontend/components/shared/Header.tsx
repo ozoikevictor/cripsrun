@@ -50,13 +50,23 @@ export function Header() {
     const viewport = window.visualViewport;
     if (!viewport) return;
     // iOS can pan the visual viewport independently when the keyboard opens.
-    const update = () => setViewportTop(Math.max(0, viewport.offsetTop));
+    const update = () => {
+      const active = document.activeElement;
+      const editing = active instanceof HTMLInputElement || active instanceof HTMLTextAreaElement ||
+        (active instanceof HTMLElement && active.isContentEditable);
+      const keyboardOpen = editing && viewport.scale === 1 && window.innerHeight - viewport.height > 100;
+      setViewportTop(keyboardOpen ? Math.max(0, viewport.offsetTop) : 0);
+    };
     update();
     viewport.addEventListener('resize', update);
     viewport.addEventListener('scroll', update);
+    document.addEventListener('focusin', update);
+    document.addEventListener('focusout', update);
     return () => {
       viewport.removeEventListener('resize', update);
       viewport.removeEventListener('scroll', update);
+      document.removeEventListener('focusin', update);
+      document.removeEventListener('focusout', update);
     };
   }, []);
 

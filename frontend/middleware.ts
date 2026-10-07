@@ -23,6 +23,14 @@ function hasAuthToken(request: NextRequest): boolean {
 }
 
 export async function middleware(request: NextRequest) {
+  // The legacy deployment has no working API; keep sign-in on one origin.
+  if (request.nextUrl.hostname === 'cripsrun.vercel.app') {
+    const canonical = request.nextUrl.clone();
+    canonical.protocol = 'https:';
+    canonical.host = 'cripsrun-zk47.vercel.app';
+    canonical.port = '';
+    return NextResponse.redirect(canonical, 307);
+  }
   const { pathname } = request.nextUrl;
 
   // Always allow static assets

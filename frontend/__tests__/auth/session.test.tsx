@@ -62,24 +62,33 @@ describe('browser session lifecycle', () => {
 
   it('keeps the header anchored when the keyboard pans the visual viewport', async () => {
     const original = Object.getOwnPropertyDescriptor(window, 'visualViewport');
-    const viewport = new EventTarget() as EventTarget & { offsetTop: number };
+    const viewport = new EventTarget() as EventTarget & { offsetTop: number; height: number; scale: number };
     viewport.offsetTop = 0;
+    viewport.height = window.innerHeight;
+    viewport.scale = 1;
+    const input = document.createElement('input');
+    const activeElement = jest.spyOn(document, 'activeElement', 'get');
     Object.defineProperty(window, 'visualViewport', { configurable: true, value: viewport });
     try {
       await act(async () => root.render(<SessionProvider><Header /></SessionProvider>));
       const header = container.querySelector('header')!;
       expect(header.style.top).toBe('0px');
       await act(async () => {
+        activeElement.mockReturnValue(input);
+        viewport.height = window.innerHeight - 300;
         viewport.offsetTop = 180;
         viewport.dispatchEvent(new Event('scroll'));
       });
       expect(header.style.top).toBe('180px');
       await act(async () => {
-        viewport.offsetTop = 0;
+        viewport.height = window.innerHeight;
         viewport.dispatchEvent(new Event('resize'));
       });
       expect(header.style.top).toBe('0px');
+      await act(async () => viewport.dispatchEvent(new Event('scroll')));
+      expect(header.style.top).toBe('0px');
     } finally {
+      activeElement.mockRestore();
       if (original) Object.defineProperty(window, 'visualViewport', original);
       else delete (window as any).visualViewport;
     }
