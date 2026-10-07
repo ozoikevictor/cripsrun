@@ -94,6 +94,13 @@
 }
 
 @layer utilities {
+  .customer-content .bg-card {
+    color: hsl(var(--card-foreground));
+  }
+
+  .customer-content .bg-background {
+    color: hsl(var(--foreground));
+  }
   .auth-page p.text-muted-foreground {
     color: #dcfce7;
   }

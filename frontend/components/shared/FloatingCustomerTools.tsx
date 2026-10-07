@@ -64,11 +64,30 @@ export function FloatingCustomerTools() {
       text: 'Hi, I am your CrispRun helper. Ask me about orders, delivery, tracking, payment, or foodstuff measures.',
     },
   ]);
-  const endRef = useRef<HTMLDivElement | null>(null);
+  const messagesRef = useRef<HTMLDivElement | null>(null);
+  const [visibleHeight, setVisibleHeight] = useState<number>();
+  const [keyboardInset, setKeyboardInset] = useState(0);
+
+  useEffect(() => {
+    const viewport = window.visualViewport;
+    if (!viewport || !chatOpen) return;
+    const update = () => {
+      setVisibleHeight(viewport.height);
+      setKeyboardInset(Math.max(0, window.innerHeight - viewport.height - viewport.offsetTop));
+    };
+    update();
+    viewport.addEventListener('resize', update);
+    viewport.addEventListener('scroll', update);
+    return () => {
+      viewport.removeEventListener('resize', update);
+      viewport.removeEventListener('scroll', update);
+    };
+  }, [chatOpen]);
 
   useEffect(() => {
     if (chatOpen) {
-      endRef.current?.scrollIntoView({ behavior: 'smooth' });
+      const container = messagesRef.current;
+      if (container) container.scrollTop = container.scrollHeight;
     }
   }, [chatOpen, messages]);
 
@@ -87,10 +106,10 @@ export function FloatingCustomerTools() {
   };
 
   return (
-    <div className="fixed bottom-5 right-5 z-50 flex flex-col items-end gap-3">
+    <div style={{ bottom: chatOpen ? keyboardInset + 16 : 16 }} className="fixed left-4 right-4 z-50 flex flex-col items-end gap-3 sm:left-auto">
       {chatOpen && (
-        <div className="w-[min(calc(100vw-2rem),380px)] overflow-hidden rounded-2xl border bg-background shadow-2xl">
-          <div className="flex items-center justify-between bg-crisp-950 p-4 text-white">
+        <div role="dialog" aria-label="CrispRun shopping helper" style={{ maxHeight: visibleHeight ? Math.max(180, visibleHeight - 32) : undefined }} className="flex h-[min(560px,calc(100dvh-32px))] w-full flex-col overflow-hidden rounded-lg border bg-background text-foreground shadow-2xl sm:w-[380px]">
+          <div className="flex shrink-0 items-center justify-between bg-crisp-950 p-4 text-white">
             <div className="flex items-center gap-3">
               <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/15">
                 <Bot className="h-5 w-5" />
@@ -112,12 +131,12 @@ export function FloatingCustomerTools() {
             </Button>
           </div>
 
-          <div className="max-h-80 space-y-3 overflow-y-auto p-4">
+          <div ref={messagesRef} role="log" aria-label="Conversation" aria-live="polite" className="min-h-0 flex-1 space-y-3 overflow-y-auto overscroll-contain p-4">
             {messages.map((chatMessage, index) => (
               <div
                 key={`${chatMessage.role}-${index}`}
                 className={cn(
-                  'max-w-[88%] rounded-2xl px-3 py-2 text-sm leading-6',
+                  'max-w-[88%] break-words rounded-lg px-3 py-2 text-sm leading-6',
                   chatMessage.role === 'assistant'
                     ? 'bg-muted text-foreground'
                     : 'ml-auto bg-primary text-primary-foreground'
@@ -126,16 +145,15 @@ export function FloatingCustomerTools() {
                 {chatMessage.text}
               </div>
             ))}
-            <div ref={endRef} />
           </div>
 
-          <div className="border-t p-4">
-            <div className="mb-3 flex flex-wrap gap-2">
+          <div className="shrink-0 border-t p-3">
+            <div className="mb-3 flex gap-2 overflow-x-auto">
               {suggestedPrompts.map((prompt) => (
                 <button
                   key={prompt}
                   type="button"
-                  className="rounded-full bg-crisp-50 px-3 py-1 text-xs font-medium text-primary transition-colors hover:bg-crisp-100"
+                  className="shrink-0 rounded bg-crisp-50 px-3 py-1 text-xs font-medium text-primary transition-colors hover:bg-crisp-100"
                   onClick={() => sendMessage(prompt)}
                 >
                   {prompt}
@@ -153,9 +171,11 @@ export function FloatingCustomerTools() {
                 value={message}
                 onChange={(event) => setMessage(event.target.value)}
                 placeholder="Ask CrispRun AI..."
-                className="h-11"
+                aria-label="Message"
+                maxLength={2000}
+                className="h-11 min-w-0 text-base"
               />
-              <Button type="submit" size="icon" aria-label="Send message">
+              <Button type="submit" size="icon" className="h-11 shrink-0" disabled={!message.trim()} aria-label="Send message">
                 <Send className="h-4 w-4" />
               </Button>
             </form>
@@ -166,7 +186,7 @@ export function FloatingCustomerTools() {
         </div>
       )}
 
-      <div className="flex flex-col items-end gap-2">
+      {!chatOpen && <div className="flex flex-col items-end gap-2">
         <Button
           type="button"
           className="h-14 rounded-full px-5 shadow-xl"
@@ -181,7 +201,7 @@ export function FloatingCustomerTools() {
           <span className="hidden sm:inline">CrispRun AI</span>
           <Sparkles className="ml-2 hidden h-4 w-4 sm:block" />
         </Button>
-      </div>
+      </div>}
     </div>
   );
 }

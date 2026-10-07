@@ -3,7 +3,7 @@
 import { apiUrl } from '@/lib/api';
 
 import { useState, useEffect } from 'react';
-import Image from 'next/image';
+import { ProductImage as Image } from '@/components/catalog/ProductImage';
 import Link from 'next/link';
 import { ArrowLeft, ShoppingCart, Clock, Leaf, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -126,7 +126,6 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
               src={productImage}
               alt={p.name}
               fill
-              unoptimized
               className="object-cover"
               sizes="(max-width: 768px) 100vw, 50vw"
               priority

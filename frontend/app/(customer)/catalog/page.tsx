@@ -482,7 +482,6 @@ export default function CatalogPage() {
                 src="/images/rice-market.png"
                 alt="CrispRun fresh foodstuff delivery"
                 fill
-                unoptimized
                 className="object-cover opacity-90"
                 sizes="(max-width: 768px) 100vw, 42vw"
               />

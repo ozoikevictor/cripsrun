@@ -49,13 +49,13 @@ export function NotificationBell({ enabled, href = '/notifications' }: { enabled
   return (
     <Link
       href={href}
-      className="relative flex h-10 w-10 items-center justify-center text-crisp-950 transition-colors hover:text-crisp-700"
+      className="relative flex h-10 w-10 shrink-0 items-center justify-center text-current transition-colors hover:opacity-80 focus-visible:outline focus-visible:outline-2"
       aria-label="Open notifications"
     >
       <Bell className="h-5 w-5" />
       {unreadCount > 0 && (
         <Badge className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full px-1 text-[10px]">
-          {unreadCount}
+          {unreadCount > 99 ? '99+' : unreadCount}
         </Badge>
       )}
     </Link>

@@ -39,12 +39,62 @@ export default function AccountPage() {
   const [phone, setPhone] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [saving, setSaving] = useState(false);
+  const [address, setAddress] = useState<AccountAddress | null>(null);
+
+  async function saveAddress(event: React.FormEvent) {
+    event.preventDefault();
+    if (!user || !address) return;
+    const addresses = user.addresses.some(item => item.id === address.id)
+      ? user.addresses.map(item => item.id === address.id ? address : item)
+      : [...user.addresses, address];
+    setSaving(true);
+    setError(null);
+    try {
+      const response = await fetch(apiUrl('/api/users/profile'), {
+        method: 'POST', credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...user, addresses }),
+      });
+      const payload = await response.json();
+      if (!response.ok || !payload.success) throw new Error(payload.error || 'Unable to save address');
+      setUser(payload.data);
+      setAddress(null);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Unable to save address');
+    } finally { setSaving(false); }
+  }
+
+  async function saveProfile() {
+    if (!user || !name.trim() || !phone.trim()) {
+      setError('Please enter your name and phone number.');
+      return;
+    }
+    setSaving(true);
+    setError(null);
+    try {
+      const response = await fetch(apiUrl('/api/users/profile'), {
+        method: 'POST', credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...user, full_name: name.trim(), phone: phone.trim() }),
+      });
+      const payload = await response.json();
+      if (!response.ok || !payload.success) throw new Error(payload.error || 'Unable to save profile');
+      setUser(payload.data);
+      setIsEditing(false);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Unable to save profile');
+    } finally {
+      setSaving(false);
+    }
+  }
 
   useEffect(() => {
     async function loadProfile() {
       try {
         const res = await fetch(apiUrl('/api/users/profile'), {
           credentials: 'include',
+          cache: 'no-store',
         });
         if (!res.ok) {
           throw new Error('Unable to load profile');
@@ -88,7 +138,7 @@ export default function AccountPage() {
   }
 
   return (
-      <div className="min-h-screen bg-muted/30">
+      <div className="min-h-screen">
         <div className="max-w-2xl mx-auto px-4 py-8 space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
@@ -100,7 +150,8 @@ export default function AccountPage() {
         </div>
 
         {/* Profile Card */}
-        <div className="rounded-xl border bg-card p-6 space-y-4">
+        <div className="rounded-lg border bg-card text-card-foreground p-4 sm:p-6 space-y-4">
+          {error && <p role="alert" className="text-sm text-red-700">{error}</p>}
           <div className="flex items-center justify-between">
             <h2 className="font-semibold flex items-center gap-2">
               <User className="h-4 w-4" />
@@ -109,7 +160,8 @@ export default function AccountPage() {
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => setIsEditing(!isEditing)}
+              disabled={saving}
+              onClick={() => { setName(user.full_name); setPhone(user.phone); setError(null); setIsEditing(!isEditing); }}
             >
               {isEditing ? 'Cancel' : 'Edit'}
             </Button>
@@ -118,7 +170,7 @@ export default function AccountPage() {
           {isEditing ? (
             <div className="space-y-3">
               <div className="space-y-1">
-                <label className="text-sm font-medium">Full Name</label>
+                <label htmlFor="account-name" className="text-sm font-medium">Full Name</label>
                 <Input
                   value={name}
                   onChange={(e) => setName(e.target.value)}
@@ -126,7 +178,7 @@ export default function AccountPage() {
                 />
               </div>
               <div className="space-y-1">
-                <label className="text-sm font-medium">Phone Number</label>
+                <label htmlFor="account-phone" className="text-sm font-medium">Phone Number</label>
                 <Input
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
@@ -140,7 +192,7 @@ export default function AccountPage() {
                   Email cannot be changed
                 </p>
               </div>
-              <Button size="sm">Save Changes</Button>
+              <Button size="sm" disabled={saving} onClick={saveProfile}>{saving ? 'Saving...' : 'Save Changes'}</Button>
             </div>
           ) : (
             <div className="space-y-3">
@@ -150,7 +202,7 @@ export default function AccountPage() {
                     {user.full_name.charAt(0)}
                   </span>
                 </div>
-                <div>
+                <div className="min-w-0 break-words">
                   <p className="font-medium">{user.full_name}</p>
                   <p className="text-sm text-muted-foreground flex items-center gap-1">
                     <Mail className="h-3 w-3" />
@@ -185,17 +237,30 @@ export default function AccountPage() {
         <Separator />
 
         {/* Saved Addresses */}
-        <div className="rounded-xl border bg-card p-6 space-y-4">
-          <div className="flex items-center justify-between">
+        <div className="rounded-lg border bg-card text-card-foreground p-4 sm:p-6 space-y-4">
+          <div className="flex flex-wrap items-center justify-between gap-2">
             <h2 className="font-semibold flex items-center gap-2">
               <MapPin className="h-4 w-4" />
               Saved Addresses
             </h2>
-            <Button variant="outline" size="sm">
+            <Button variant="outline" size="sm" disabled={saving} onClick={() => setAddress({ id: crypto.randomUUID(), label: '', full_address: '', lga: '', city: 'Lagos' })}>
               Add Address
             </Button>
           </div>
 
+          {address && <form onSubmit={saveAddress} className="space-y-3">
+            {(['label', 'full_address', 'lga', 'city'] as const).map(field => (
+              <div key={field} className="space-y-1">
+                <label htmlFor={`address-${field}`} className="text-sm font-medium">{{ label: 'Address name', full_address: 'Street address', lga: 'Local government area', city: 'City' }[field]}</label>
+                <Input id={`address-${field}`} required value={address[field]} onChange={event => setAddress({ ...address, [field]: event.target.value })} />
+              </div>
+            ))}
+            <div className="flex gap-2">
+              <Button type="submit" disabled={saving}>{saving ? 'Saving...' : 'Save address'}</Button>
+              <Button type="button" variant="outline" disabled={saving} onClick={() => setAddress(null)}>Cancel</Button>
+            </div>
+          </form>}
+          {!user.addresses.length && !address && <p className="text-sm text-muted-foreground">No saved addresses.</p>}
           <div className="space-y-3">
             {user.addresses.map((addr) => (
               <div
@@ -209,7 +274,7 @@ export default function AccountPage() {
                   </p>
                   <p className="text-xs text-muted-foreground">{addr.lga}</p>
                 </div>
-                <Button variant="ghost" size="sm">
+                <Button variant="ghost" size="sm" disabled={saving} onClick={() => setAddress({ ...addr })}>
                   Edit
                 </Button>
               </div>

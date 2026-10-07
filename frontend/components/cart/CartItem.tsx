@@ -1,6 +1,6 @@
 'use client';
 
-import Image from 'next/image';
+import { ProductImage as Image } from '@/components/catalog/ProductImage';
 import { Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { KgSelector } from './KgSelector';
@@ -46,7 +46,7 @@ export function CartItem({ item }: CartItemProps) {
           <Button
             variant="ghost"
             size="icon"
-            className="h-7 w-7 flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-destructive"
+            className="h-9 w-9 flex-shrink-0 text-muted-foreground hover:text-destructive"
             onClick={() => removeItem(item.product_id)}
             aria-label={`Remove ${snap.name}`}
           >

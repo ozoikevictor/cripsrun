@@ -1,7 +1,7 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import Image from 'next/image';
+import { ProductImage as Image } from './ProductImage';
 import { ChevronDown, Leaf, PackageOpen } from 'lucide-react';
 
 import { ProductCard } from './ProductCard';
@@ -269,7 +269,6 @@ export function ProductGroupGrid({ products }: ProductGroupGridProps) {
                     src={image}
                     alt={family.label}
                     fill
-                    unoptimized
                     className="object-cover"
                     sizes="48px"
                   />

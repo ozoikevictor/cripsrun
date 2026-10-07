@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import Image from 'next/image';
+import { ProductImage as Image } from './ProductImage';
 import Link from 'next/link';
 import { ShoppingCart, Clock, Leaf, ArrowUpRight } from 'lucide-react';
 
@@ -68,8 +68,6 @@ export function ProductCard({ product }: ProductCardProps) {
               src={productImage}
               alt={product.name}
               fill
-              unoptimized
-              priority={product.is_featured}
               className="object-cover transition-transform duration-500 group-hover:scale-105"
               sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
             />

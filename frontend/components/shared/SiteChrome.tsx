@@ -32,7 +32,7 @@ function ChromeContent({ children }: { children: React.ReactNode }) {
   return (
     <>
       <Header />
-      <main className="site-deep-bg flex-1 text-white">
+      <main className="customer-content site-deep-bg flex-1 text-white">
         <SessionBoundary>{children}</SessionBoundary>
       </main>
       {!hideFooter && <Footer />}
