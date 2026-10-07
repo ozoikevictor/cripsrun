@@ -31,7 +31,9 @@ function ChromeContent({ children }: { children: React.ReactNode }) {
 
   return (
     <>
-      <Header />
+      <div className="h-24 shrink-0">
+        <Header />
+      </div>
       <main className="customer-content site-deep-bg flex-1">
         <SessionBoundary>{children}</SessionBoundary>
       </main>

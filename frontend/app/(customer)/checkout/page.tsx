@@ -185,7 +185,7 @@ export default function CheckoutPage() {
               </div>
 
               {deliveryConfig.loading && <p role="status">Checking delivery availability...</p>}
-              {deliveryConfig.scheduleError && <p role="alert" className="text-sm text-red-700">{deliveryConfig.scheduleError}</p>}
+              {deliveryConfig.scheduleError && <div className="space-y-2"><p role="alert" className="text-sm text-destructive">{deliveryConfig.scheduleError}</p><Button variant="outline" size="sm" onClick={deliveryConfig.retry}>Check again</Button></div>}
               {deliveryDate && !deliveryConfig.loading && !deliveryConfig.scheduleError && !deliveryConfig.isDateAvailable(deliveryDate) && <p role="alert" className="text-sm text-red-700">This date is unavailable or its ordering cutoff has passed. Choose another date.</p>}
               {!deliveryConfig.scheduleError && !deliveryConfig.loading && deliveryConfig.deliveryType === 'MUST_SPLIT' && (
                 <div className="p-3 rounded-lg bg-amber-50 border border-amber-200 text-sm text-amber-800 dark:bg-amber-950 dark:border-amber-800 dark:text-amber-200">
@@ -195,13 +195,19 @@ export default function CheckoutPage() {
               )}
 
               <div className="space-y-3">
-                <Input
-                  type="date"
+                <label htmlFor="delivery-date" className="block text-sm font-medium">Available delivery dates</label>
+                <select
                   value={deliveryDate}
                   onChange={(e) => setDeliveryDate(e.target.value)}
-                  min={deliveryConfig.earliestDate.toISOString().split('T')[0]}
                   id="delivery-date"
-                />
+                  disabled={deliveryConfig.loading || !!deliveryConfig.scheduleError || !deliveryConfig.availableDates.length}
+                  className="h-11 w-full rounded-md border border-input bg-background px-3 text-base text-foreground"
+                >
+                  <option value="">Choose a delivery date</option>
+                  {deliveryDate && !deliveryConfig.isDateAvailable(deliveryDate) && <option value={deliveryDate} disabled>{formatDateOnly(deliveryDate)} — unavailable</option>}
+                  {deliveryConfig.availableDates.map(date => <option key={date} value={date}>{formatDateOnly(date)}{date === deliveryConfig.nextAvailableDate ? ' (next available)' : ''}</option>)}
+                </select>
+                {deliveryConfig.nextAvailableDate && deliveryDate !== deliveryConfig.nextAvailableDate && <Button variant="outline" size="sm" onClick={() => setDeliveryDate(deliveryConfig.nextAvailableDate!)}>Choose next available date</Button>}
                 {!deliveryConfig.canSelectAnyDay && (
                   <p className="text-xs text-muted-foreground">
                     Some items in your cart are perishable and can only be delivered

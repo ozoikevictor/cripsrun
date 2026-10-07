@@ -71,7 +71,7 @@ export function Header() {
   };
 
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-border bg-card/95 text-foreground shadow-sm backdrop-blur-md">
+    <header className="fixed inset-x-0 top-0 z-40 w-full border-b border-border bg-card/95 text-foreground shadow-sm backdrop-blur-md">
       <div className="border-b border-border bg-secondary text-muted-foreground">
         <div className="container flex h-8 items-center justify-between text-xs">
           <div className="flex items-center gap-2">
