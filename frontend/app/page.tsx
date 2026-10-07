@@ -89,11 +89,11 @@ const STEPS = [
 
 export default function HomePage() {
   return (
-    <div className="flex flex-col text-white">
+    <div className="flex flex-col text-foreground">
       <section>
         <div className="container grid min-h-[680px] items-center gap-10 py-12 lg:grid-cols-[1fr_0.92fr] lg:py-16">
           <div className="space-y-7">
-            <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/10 px-4 py-2 text-sm font-semibold text-crisp-100 backdrop-blur">
+            <div className="inline-flex items-center gap-2 rounded-full border border-border bg-secondary px-4 py-2 text-sm font-semibold text-muted-foreground backdrop-blur">
               <span className="flex h-2.5 w-2.5 rounded-full bg-crisp-300" />
               Fresh food delivered across Lagos
             </div>
@@ -101,10 +101,10 @@ export default function HomePage() {
             <div className="space-y-5">
               <h1 className="max-w-4xl text-5xl font-bold tracking-tight sm:text-6xl lg:text-7xl">
                 Fresh food for your kitchen,
-                <span className="block text-crisp-300">packed and delivered.</span>
+                <span className="block text-primary">packed and delivered.</span>
               </h1>
 
-              <p className="max-w-2xl text-lg leading-relaxed text-crisp-100/80 md:text-xl">
+              <p className="max-w-2xl text-lg leading-relaxed text-muted-foreground md:text-xl">
                 Shop quality beef, chicken, fish, flour, peppers, and everyday
                 groceries by kilogram. CrispRun helps you buy fresh food without
                 the market stress.
@@ -123,16 +123,16 @@ export default function HomePage() {
             </div>
 
             <div className="grid max-w-2xl gap-3 sm:grid-cols-3">
-              <div className="flex items-center gap-2 rounded-lg border border-white/10 bg-white/10 p-3 text-sm backdrop-blur">
-                <PackageCheck className="h-4 w-4 text-crisp-300" />
+              <div className="flex items-center gap-2 rounded-lg border border-border bg-secondary p-3 text-sm backdrop-blur">
+                <PackageCheck className="h-4 w-4 text-primary" />
                 Freshly packed
               </div>
-              <div className="flex items-center gap-2 rounded-lg border border-white/10 bg-white/10 p-3 text-sm backdrop-blur">
-                <Truck className="h-4 w-4 text-crisp-300" />
+              <div className="flex items-center gap-2 rounded-lg border border-border bg-secondary p-3 text-sm backdrop-blur">
+                <Truck className="h-4 w-4 text-primary" />
                 Lagos delivery
               </div>
-              <div className="flex items-center gap-2 rounded-lg border border-white/10 bg-white/10 p-3 text-sm backdrop-blur">
-                <ShieldCheck className="h-4 w-4 text-crisp-300" />
+              <div className="flex items-center gap-2 rounded-lg border border-border bg-secondary p-3 text-sm backdrop-blur">
+                <ShieldCheck className="h-4 w-4 text-primary" />
                 Quality checked
               </div>
             </div>
@@ -140,7 +140,7 @@ export default function HomePage() {
 
           <div className="relative">
             <div className="grid grid-cols-2 gap-3 sm:block">
-            <div className="relative aspect-[3/4] overflow-hidden rounded-2xl border border-white/10 bg-white/10 shadow-2xl shadow-crisp-950/40 sm:aspect-[5/4] sm:rounded-[2rem] lg:aspect-[4/5]">
+            <div className="relative aspect-[3/4] overflow-hidden rounded-2xl border border-border bg-secondary shadow-2xl shadow-crisp-950/40 sm:aspect-[5/4] sm:rounded-[2rem] lg:aspect-[4/5]">
               <Image
                 src="/images/premium-beef-steak.png"
                 alt="Fresh beef steak packed for CrispRun delivery"
@@ -151,7 +151,7 @@ export default function HomePage() {
               />
             </div>
 
-            <div className="relative aspect-[3/4] overflow-hidden rounded-2xl border border-white/10 bg-white/10 shadow-2xl shadow-crisp-950/40 sm:hidden">
+            <div className="relative aspect-[3/4] overflow-hidden rounded-2xl border border-border bg-secondary shadow-2xl shadow-crisp-950/40 sm:hidden">
               <Image
                 src="/images/rice-market.png"
                 alt="Fresh foodstuff packed for CrispRun delivery"
@@ -185,13 +185,13 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="border-y border-white/10 bg-[#071b10]/75 backdrop-blur">
+      <section className="border-y border-border bg-secondary backdrop-blur">
         <div className="container grid gap-4 py-8 sm:grid-cols-2 lg:grid-cols-4">
           {CATEGORIES.map((category) => (
             <Link
               key={category.name}
               href={category.href}
-              className="group flex items-center gap-4 rounded-xl border border-white/10 bg-white/95 p-3 text-crisp-950 transition-all hover:-translate-y-0.5 hover:shadow-md"
+              className="group flex items-center gap-4 rounded-xl border border-border bg-white/95 p-3 text-crisp-950 transition-all hover:-translate-y-0.5 hover:shadow-md"
             >
               <div className="relative h-16 w-16 overflow-hidden rounded-lg bg-muted">
                 <Image src={category.image} alt={category.name} fill className="object-cover" sizes="64px" />
@@ -215,7 +215,7 @@ export default function HomePage() {
             <h2 className="text-3xl font-bold md:text-4xl">
               Popular products
             </h2>
-            <p className="mt-2 max-w-xl text-crisp-100/75">
+            <p className="mt-2 max-w-xl text-muted-foreground">
               Frequently ordered items from Lagos homes and small kitchens.
             </p>
           </div>
@@ -234,7 +234,7 @@ export default function HomePage() {
             <Link
               key={product.slug}
               href={`/product/${product.slug}`}
-              className="group overflow-hidden rounded-xl border border-white/10 bg-white/95 text-crisp-950 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
+              className="group overflow-hidden rounded-xl border border-border bg-white/95 text-crisp-950 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
             >
               <div className="relative aspect-square overflow-hidden bg-muted sm:aspect-[4/3]">
                 <Image
@@ -271,7 +271,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="bg-[#071b10]/75 backdrop-blur">
+      <section className="bg-secondary backdrop-blur">
         <div className="container grid gap-10 py-16 md:py-24 lg:grid-cols-[0.85fr_1.15fr]">
           <div>
             <p className="text-sm font-semibold uppercase tracking-wider text-primary">
@@ -280,14 +280,14 @@ export default function HomePage() {
             <h2 className="mt-2 text-3xl font-bold md:text-4xl">
               Built for fresh food shopping in Lagos
             </h2>
-            <p className="mt-4 text-crisp-100/75">
+            <p className="mt-4 text-muted-foreground">
               CrispRun keeps the buying process clear: choose the item, select
               the weight, schedule delivery, and get updates until it arrives.
             </p>
 
             <div className="mt-8 space-y-3">
               {STEPS.map((step, index) => (
-                <div key={step} className="flex items-center gap-3 rounded-lg border border-white/10 bg-white/10 p-3">
+                <div key={step} className="flex items-center gap-3 rounded-lg border border-border bg-secondary p-3">
                   <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-sm font-bold text-primary-foreground">
                     {index + 1}
                   </span>
@@ -301,7 +301,7 @@ export default function HomePage() {
             {FEATURES.map((feature) => (
               <div
                 key={feature.title}
-                className="rounded-xl border border-white/10 bg-white/95 p-6 text-crisp-950 transition-all duration-300 hover:-translate-y-1 hover:border-primary/20 hover:shadow-lg"
+                className="rounded-xl border border-border bg-white/95 p-6 text-crisp-950 transition-all duration-300 hover:-translate-y-1 hover:border-primary/20 hover:shadow-lg"
               >
                 <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary">
                   <feature.icon className="h-6 w-6" />
@@ -316,33 +316,33 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="bg-[#020b07] text-white">
+      <section className="store-inverse text-white">
         <div className="container grid gap-8 py-16 md:grid-cols-[1fr_0.7fr] md:items-center md:py-20">
           <div>
-            <p className="mb-3 text-sm font-semibold uppercase tracking-wider text-crisp-200">
+            <p className="mb-3 text-sm font-semibold uppercase tracking-wider text-primary">
               Ready when you are
             </p>
             <h2 className="text-3xl font-bold md:text-5xl">
               Stock your kitchen without going to the market.
             </h2>
-            <p className="mt-4 max-w-2xl text-crisp-100">
+            <p className="mt-4 max-w-2xl text-muted-foreground">
               Browse the catalog, pick your products by weight, select your
               delivery date, and let CrispRun handle the fresh food run.
             </p>
           </div>
 
-          <div className="rounded-2xl bg-white/10 p-5">
+          <div className="rounded-2xl bg-secondary p-5">
             <div className="space-y-3">
               <div className="flex items-center gap-3">
-                <CheckCircle2 className="h-5 w-5 text-crisp-300" />
+                <CheckCircle2 className="h-5 w-5 text-primary" />
                 <span>Fresh products packed carefully</span>
               </div>
               <div className="flex items-center gap-3">
-                <MapPin className="h-5 w-5 text-crisp-300" />
+                <MapPin className="h-5 w-5 text-primary" />
                 <span>Delivery across Lagos areas</span>
               </div>
               <div className="flex items-center gap-3">
-                <Clock className="h-5 w-5 text-crisp-300" />
+                <Clock className="h-5 w-5 text-primary" />
                 <span>Schedule your preferred delivery day</span>
               </div>
             </div>

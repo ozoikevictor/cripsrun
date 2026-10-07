@@ -249,11 +249,11 @@ export function ProductGroupGrid({ products }: ProductGroupGridProps) {
         return (
           <section
             key={family.id}
-            className="border-b border-white/15 pb-4"
+            className="border-b border-border pb-4"
           >
             <button
               type="button"
-              className="flex w-full items-center gap-3 py-3 text-left text-white transition-colors hover:text-crisp-200"
+              className="flex w-full items-center gap-3 py-3 text-left text-foreground transition-colors hover:text-primary"
               aria-expanded={isOpen}
               aria-controls={`products-${family.id}`}
               onClick={() =>
@@ -282,19 +282,19 @@ export function ProductGroupGrid({ products }: ProductGroupGridProps) {
               <div className="min-w-0 flex-1">
                 <div className="flex flex-wrap items-center gap-2">
                   <h3 className="text-base font-semibold">{family.label}</h3>
-                  <span className="text-xs text-crisp-100/80">
+                  <span className="text-xs text-muted-foreground">
                     {groupProducts.length} option
                     {groupProducts.length === 1 ? '' : 's'}
                   </span>
                 </div>
-                <p className="mt-1 line-clamp-2 text-xs leading-4 text-crisp-100/80 md:max-w-2xl">
+                <p className="mt-1 line-clamp-2 text-xs leading-4 text-muted-foreground md:max-w-2xl">
                   {family.description}
                 </p>
               </div>
 
               <ChevronDown
                 className={cn(
-                  'h-5 w-5 flex-shrink-0 text-crisp-200 transition-transform',
+                  'h-5 w-5 flex-shrink-0 text-primary transition-transform',
                   isOpen && 'rotate-180'
                 )}
               />

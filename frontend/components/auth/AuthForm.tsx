@@ -15,12 +15,12 @@ interface AuthFormProps {
 
 export function AuthForm({ title, subtitle, children, footer, error }: AuthFormProps) {
   return (
-    <div className="site-deep-bg auth-page flex min-h-screen flex-col px-4 text-white">
+    <div className="site-deep-bg auth-page flex min-h-screen flex-col px-4 text-foreground">
       <header className="mx-auto flex w-full max-w-5xl items-center justify-between py-5">
         <BrandLogo showTagline={false} compact />
         <Link
           href="/"
-          className="inline-flex min-h-11 items-center gap-2 rounded-md px-3 text-sm font-medium text-crisp-100/75 transition-colors hover:bg-white/10 hover:text-white"
+          className="inline-flex min-h-11 items-center gap-2 rounded-md px-3 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-primary"
         >
           <ArrowLeft className="h-4 w-4" aria-hidden="true" />
           Back to home
@@ -29,10 +29,10 @@ export function AuthForm({ title, subtitle, children, footer, error }: AuthFormP
 
       <main className="flex flex-1 flex-col items-center justify-center py-8">
         <div className="w-full max-w-md space-y-6">
-          <div className="space-y-6 rounded-xl border border-white/10 bg-[#0b1710]/92 p-6 shadow-2xl shadow-crisp-950/30 sm:p-8">
+          <div className="space-y-6 rounded-lg border bg-card p-6 text-card-foreground shadow-lg shadow-black/5 sm:p-8">
             <div className="space-y-1 text-center">
               <h1 className="text-2xl font-bold">{title}</h1>
-              <p className="text-sm text-crisp-100/80">{subtitle}</p>
+              <p className="text-sm text-muted-foreground">{subtitle}</p>
             </div>
 
             {error && (
@@ -45,14 +45,14 @@ export function AuthForm({ title, subtitle, children, footer, error }: AuthFormP
           </div>
 
           {footer && (
-            <div className="text-center text-sm text-crisp-100/80">
+            <div className="text-center text-sm text-muted-foreground">
               {footer}
             </div>
           )}
         </div>
       </main>
 
-      <footer className="py-5 text-center text-xs text-crisp-100/80">
+      <footer className="py-5 text-center text-xs text-muted-foreground">
         Fresh food, thoughtfully delivered.
       </footer>
     </div>

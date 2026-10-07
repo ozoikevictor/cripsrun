@@ -60,6 +60,26 @@ describe('browser session lifecycle', () => {
     expect(fetchMock).toHaveBeenCalledWith('/api/auth/session', expect.objectContaining({ cache: 'no-store', credentials: 'include' }));
   });
 
+  it('opens the side menu without focusing search and shows the requested links', async () => {
+    await act(async () => root.render(<SessionProvider><Header /></SessionProvider>));
+    await act(async () => {
+      container.querySelector<HTMLButtonElement>('button[aria-label="Open menu"]')!.click();
+    });
+    const dialog = document.querySelector<HTMLElement>('[role="dialog"]')!;
+    expect(dialog).not.toBeNull();
+    expect(document.activeElement).toBe(dialog);
+    expect(document.activeElement).not.toBe(dialog.querySelector('input[type="search"]'));
+    const links = Array.from(dialog.querySelectorAll('nav a'));
+    expect(links.map(link => link.textContent?.trim())).toEqual([
+      'Crisp Home', 'Categories', 'Cart', 'Notifications', 'My Orders', 'My Profile',
+    ]);
+    expect(links[0].getAttribute('href')).toBe('/');
+    expect(dialog.textContent).not.toContain('Marketplace');
+    await act(async () => {
+      dialog.querySelector<HTMLButtonElement>('button:last-child')!.click();
+    });
+  });
+
   it('keeps a neutral state until the first account check completes', async () => {
     const pending = deferred();
     fetchMock.mockReturnValueOnce(pending.promise);

@@ -19,16 +19,16 @@ export function CartItem({ item }: CartItemProps) {
   const { product_snapshot: snap } = item;
 
   return (
-    <div className="flex gap-3 py-3 group">
+    <div className="flex gap-3 py-5 sm:gap-5 sm:py-6 group">
       {/* Product image */}
-      <div className="relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-lg bg-muted">
+      <div className="relative h-20 w-20 sm:h-24 sm:w-24 flex-shrink-0 overflow-hidden rounded-md bg-muted">
         {snap.image_url ? (
           <Image
             src={snap.image_url}
             alt={snap.name}
             fill
             className="object-cover"
-            sizes="64px"
+            sizes="(min-width: 640px) 96px, 80px"
           />
         ) : (
           <div className="flex h-full w-full items-center justify-center text-muted-foreground text-xs">
@@ -38,9 +38,9 @@ export function CartItem({ item }: CartItemProps) {
       </div>
 
       {/* Details */}
-      <div className="flex-1 min-w-0 space-y-1">
+      <div className="flex-1 min-w-0 space-y-2">
         <div className="flex items-start justify-between gap-2">
-          <h4 className="text-sm font-medium leading-tight line-clamp-2">
+          <h4 className="text-sm sm:text-base font-semibold leading-snug break-words">
             {snap.name}
           </h4>
           <Button

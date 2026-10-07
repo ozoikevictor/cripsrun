@@ -5,182 +5,77 @@
 @layer base {
   :root {
     --font-inter: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-
-    --background: 0 0% 100%;
-    --foreground: 142 20% 8%;
-
+    --background: 200 17% 94%;
+    --foreground: 200 16% 16%;
     --card: 0 0% 100%;
-    --card-foreground: 142 20% 8%;
-
+    --card-foreground: 200 16% 16%;
     --popover: 0 0% 100%;
-    --popover-foreground: 142 20% 8%;
-
-    --primary: 142 72% 29%;
+    --popover-foreground: 200 16% 16%;
+    --primary: 177 100% 23%;
     --primary-foreground: 0 0% 100%;
-
-    --secondary: 140 20% 96%;
-    --secondary-foreground: 142 20% 15%;
-
-    --muted: 140 15% 96%;
-    --muted-foreground: 142 10% 45%;
-
-    --accent: 140 20% 94%;
-    --accent-foreground: 142 20% 15%;
-
-    --destructive: 0 84% 60%;
+    --secondary: 180 17% 90%;
+    --secondary-foreground: 200 16% 16%;
+    --muted: 200 13% 91%;
+    --muted-foreground: 200 10% 36%;
+    --accent: 177 28% 89%;
+    --accent-foreground: 177 100% 20%;
+    --destructive: 0 72% 42%;
     --destructive-foreground: 0 0% 100%;
-
-    --border: 142 10% 90%;
-    --input: 142 10% 90%;
-    --ring: 142 72% 29%;
-
-    --radius: 0.75rem;
+    --border: 200 13% 82%;
+    --input: 200 13% 76%;
+    --ring: 177 100% 23%;
+    --radius: 0.5rem;
   }
-
   .dark {
-    --background: 142 20% 5%;
-    --foreground: 140 15% 95%;
-
-    --card: 142 18% 8%;
-    --card-foreground: 140 15% 95%;
-
-    --popover: 142 18% 8%;
-    --popover-foreground: 140 15% 95%;
-
-    --primary: 142 72% 45%;
-    --primary-foreground: 142 20% 5%;
-
-    --secondary: 142 15% 15%;
-    --secondary-foreground: 140 15% 90%;
-
-    --muted: 142 15% 15%;
-    --muted-foreground: 142 10% 55%;
-
-    --accent: 142 15% 18%;
-    --accent-foreground: 140 15% 90%;
-
-    --destructive: 0 62% 50%;
-    --destructive-foreground: 0 0% 100%;
-
-    --border: 142 12% 18%;
-    --input: 142 12% 18%;
-    --ring: 142 72% 45%;
+    --background: 200 10% 12%;
+    --foreground: 200 12% 95%;
+    --card: 200 10% 17%;
+    --card-foreground: 200 12% 95%;
+    --popover: 200 10% 17%;
+    --popover-foreground: 200 12% 95%;
+    --secondary: 200 10% 23%;
+    --secondary-foreground: 200 12% 95%;
+    --muted: 200 10% 23%;
+    --muted-foreground: 200 10% 75%;
+    --accent: 200 10% 26%;
+    --accent-foreground: 200 12% 95%;
+    --border: 200 10% 33%;
+    --input: 200 10% 40%;
   }
+  * { @apply border-border; }
+  body { @apply bg-background text-foreground antialiased; font-feature-settings: "rlig" 1, "calt" 1; }
+  html { scroll-behavior: smooth; }
+  ::selection { background: #b4e4df; color: #222b30; }
 }
-
-@layer base {
-  * {
-    @apply border-border;
-  }
-
-  body {
-    @apply bg-background text-foreground antialiased;
-    background:
-      radial-gradient(circle at 12% 0%, hsl(145 68% 18% / 0.35), transparent 28rem),
-      radial-gradient(circle at 88% 16%, hsl(142 70% 24% / 0.28), transparent 30rem),
-      linear-gradient(135deg, hsl(150 48% 5%), hsl(146 60% 9%) 45%, hsl(142 48% 17%));
-    font-feature-settings: "rlig" 1, "calt" 1;
-  }
-
-  /* Smooth scrolling */
-  html {
-    scroll-behavior: smooth;
-  }
-
-  /* Selection color */
-  ::selection {
-    @apply bg-primary/20 text-foreground;
-  }
-}
-
 @layer utilities {
-  .mobile-navigation a {
-    border-radius: 4px;
-    padding-left: 8px;
-    padding-right: 8px;
-    color: #dcfce7;
+  .site-deep-bg { @apply bg-background text-foreground; }
+  .site-soft-panel { @apply border bg-card text-card-foreground shadow-sm; }
+  .store-inverse {
+    --foreground: 200 12% 95%;
+    --secondary: 200 13% 23%;
+    --secondary-foreground: 200 12% 95%;
+    --accent: 200 13% 28%;
+    --accent-foreground: 200 12% 95%;
+    --border: 200 13% 36%;
+    background: #222b30;
+    color: #f3f7f8;
   }
-  .mobile-navigation a:hover {
-    background: rgb(255 255 255 / 0.08);
-    color: white;
-  }
-  .mobile-navigation .text-crisp-700 {
-    color: #86efac;
-  }
-  .customer-content .bg-card {
-    color: hsl(var(--card-foreground));
-  }
-
-  .customer-content .bg-background {
-    color: hsl(var(--foreground));
-  }
-  .auth-page p.text-muted-foreground {
-    color: #dcfce7;
-  }
-
-  .auth-page a.text-primary {
-    color: #86efac;
-  }
-  /* Hide scrollbar but keep functionality */
-  .scrollbar-hide {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-  }
-  .scrollbar-hide::-webkit-scrollbar {
-    display: none;
-  }
-
-  /* Gradient text */
-  .text-gradient {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-crisp-600 to-crisp-400;
-  }
-
-  /* Glass effect */
-  .glass {
-    @apply bg-white/80 backdrop-blur-lg border border-white/20;
-  }
-
-  .dark .glass {
-    @apply bg-black/40 backdrop-blur-lg border border-white/10;
-  }
-
-  .promo-marquee {
-    animation: promo-marquee 24s linear infinite;
-  }
-
-  .promo-float {
-    animation: promo-float 5s ease-in-out infinite;
-  }
-
-  .site-deep-bg {
-    background:
-      radial-gradient(circle at 8% 2%, hsl(145 70% 22% / 0.4), transparent 28rem),
-      radial-gradient(circle at 92% 22%, hsl(142 64% 26% / 0.34), transparent 30rem),
-      linear-gradient(135deg, hsl(150 50% 5%), hsl(146 58% 9%) 46%, hsl(142 50% 17%));
-  }
-
-  .site-soft-panel {
-    @apply border border-white/10 bg-white/95 text-crisp-950 shadow-xl shadow-crisp-950/15;
-  }
+  .store-inverse .text-muted-foreground { color: #c5d1d6; }
+  .store-inverse .text-primary { color: #83d4cc; }
+  .mobile-navigation a { border-radius: 4px; padding-left: 8px; padding-right: 8px; }
+  .mobile-navigation a:hover { @apply bg-accent text-accent-foreground; }
+  .cart-page .cart-accent { color: #00756f; }
+  .dark .cart-page .cart-accent { color: #83d4cc; }
+  .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+  .scrollbar-hide::-webkit-scrollbar { display: none; }
+  .text-gradient { @apply text-primary; }
+  .glass { @apply bg-card/95 border backdrop-blur-lg; }
+  .promo-marquee { animation: promo-marquee 24s linear infinite; }
+  .promo-float { animation: promo-float 5s ease-in-out infinite; }
 }
-
-@keyframes promo-marquee {
-  from {
-    transform: translateX(0);
-  }
-
-  to {
-    transform: translateX(-50%);
-  }
-}
-
-@keyframes promo-float {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-
-  50% {
-    transform: translateY(-10px);
-  }
+@keyframes promo-marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+@keyframes promo-float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .promo-marquee, .promo-float { animation: none; }
 }

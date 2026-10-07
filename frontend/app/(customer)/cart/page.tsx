@@ -15,7 +15,7 @@ export default function CartPage() {
 
   if (items.length === 0) {
     return (
-      <div className="container py-16 flex flex-col items-center justify-center text-center space-y-6">
+      <div className="cart-page container py-16 flex flex-col items-center justify-center text-center space-y-6">
         <div className="h-24 w-24 rounded-full bg-muted flex items-center justify-center">
           <ShoppingBag className="h-12 w-12 text-muted-foreground" />
         </div>
@@ -36,20 +36,21 @@ export default function CartPage() {
   }
 
   return (
-    <div className="container py-8 max-w-3xl">
+    <div className="cart-page container max-w-6xl py-6 sm:py-10">
       {/* Header */}
       <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
         <div>
           <Link
             href="/catalog"
-            className="inline-flex items-center gap-1 text-sm text-crisp-100 hover:text-white transition-colors mb-2"
+            className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors mb-4"
           >
             <ArrowLeft className="h-4 w-4" />
             Continue shopping
           </Link>
-          <h1 className="text-2xl font-bold">
-            Your Cart ({items.length} item{items.length > 1 ? 's' : ''})
-          </h1>
+          <h1 className="text-2xl font-semibold sm:text-3xl">Your cart</h1>
+          <p className="mt-2 text-sm text-muted-foreground">
+            {items.length} item{items.length > 1 ? 's' : ''} in your basket
+          </p>
         </div>
         <Button
           variant="ghost"
@@ -63,30 +64,36 @@ export default function CartPage() {
       </div>
 
       {/* Items */}
-      <div className="rounded-lg border bg-card text-card-foreground">
-        <div className="divide-y px-4">
+      <div className="grid items-start gap-8 lg:grid-cols-[minmax(0,1fr)_340px]">
+      <section aria-label="Cart items" className="min-w-0 overflow-hidden rounded-lg border bg-card text-card-foreground">
+        <div className="flex flex-wrap items-center gap-2 border-b bg-muted/40 px-3 py-4 sm:px-6">
+          <ShoppingBag className="cart-accent h-4 w-4" />
+          <h2 className="cart-accent text-sm font-semibold">CrispRun order</h2>
+          <span className="text-sm text-muted-foreground">&middot; {items.length} item{items.length > 1 ? 's' : ''}</span>
+        </div>
+        <div className="divide-y px-3 sm:px-6">
           {items.map((item) => (
             <CartItem key={item.product_id} item={item} />
           ))}
         </div>
-      </div>
+      </section>
 
       {/* Summary */}
-      <div className="mt-6 rounded-lg border bg-card text-card-foreground p-4 sm:p-6 space-y-4">
-        <h2 className="font-semibold">Order Summary</h2>
+      <aside aria-label="Order summary" className="min-w-0 rounded-lg border bg-card p-5 text-card-foreground space-y-5 sm:p-6 lg:sticky lg:top-28">
+        <h2 className="text-lg font-semibold">Order summary</h2>
 
         <div className="space-y-2">
-          <div className="flex items-center justify-between text-sm">
+          <div className="flex items-center justify-between gap-4 text-sm">
             <span className="text-muted-foreground">Subtotal</span>
             <span className="font-medium">{formatCurrency(subtotal)}</span>
           </div>
-          <div className="flex items-center justify-between text-sm">
+          <div className="flex flex-wrap items-center justify-between gap-2 text-sm">
             <span className="text-muted-foreground">Delivery Fee</span>
             <span className="text-xs text-muted-foreground italic">
               Calculated at checkout
             </span>
           </div>
-          <div className="flex items-center justify-between text-sm">
+          <div className="flex flex-wrap items-center justify-between gap-2 text-sm">
             <span className="text-muted-foreground">Service Charge</span>
             <span className="text-xs text-muted-foreground italic">
               Calculated at checkout
@@ -96,9 +103,9 @@ export default function CartPage() {
 
         <Separator />
 
-        <div className="flex items-center justify-between">
-          <span className="font-semibold">Estimated Total</span>
-          <span className="text-2xl font-bold text-primary">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <span className="font-semibold">Items total</span>
+          <span className="cart-accent max-w-full break-words text-2xl font-semibold tabular-nums">
             {formatCurrency(subtotal)}
           </span>
         </div>
@@ -114,6 +121,10 @@ export default function CartPage() {
             <ArrowRight className="ml-2 h-5 w-5" />
           </Button>
         </Link>
+        <Link href="/catalog" className="block text-center text-sm text-muted-foreground transition-colors hover:text-primary">
+          Continue shopping
+        </Link>
+      </aside>
       </div>
     </div>
   );
