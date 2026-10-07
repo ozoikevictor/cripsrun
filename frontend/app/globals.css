@@ -94,6 +94,19 @@
 }
 
 @layer utilities {
+  .mobile-navigation a {
+    border-radius: 4px;
+    padding-left: 8px;
+    padding-right: 8px;
+    color: #dcfce7;
+  }
+  .mobile-navigation a:hover {
+    background: rgb(255 255 255 / 0.08);
+    color: white;
+  }
+  .mobile-navigation .text-crisp-700 {
+    color: #86efac;
+  }
   .customer-content .bg-card {
     color: hsl(var(--card-foreground));
   }

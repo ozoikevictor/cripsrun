@@ -38,11 +38,11 @@ export default function CartPage() {
   return (
     <div className="container py-8 max-w-3xl">
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
         <div>
           <Link
             href="/catalog"
-            className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors mb-2"
+            className="inline-flex items-center gap-1 text-sm text-crisp-100 hover:text-white transition-colors mb-2"
           >
             <ArrowLeft className="h-4 w-4" />
             Continue shopping
@@ -63,7 +63,7 @@ export default function CartPage() {
       </div>
 
       {/* Items */}
-      <div className="rounded-xl border bg-card">
+      <div className="rounded-lg border bg-card text-card-foreground">
         <div className="divide-y px-4">
           {items.map((item) => (
             <CartItem key={item.product_id} item={item} />
@@ -72,7 +72,7 @@ export default function CartPage() {
       </div>
 
       {/* Summary */}
-      <div className="mt-6 rounded-xl border bg-card p-6 space-y-4">
+      <div className="mt-6 rounded-lg border bg-card text-card-foreground p-4 sm:p-6 space-y-4">
         <h2 className="font-semibold">Order Summary</h2>
 
         <div className="space-y-2">
@@ -108,7 +108,7 @@ export default function CartPage() {
           checkout after selecting your delivery address.
         </p>
 
-        <Link href="/checkout">
+        <Link href="/checkout" className="block">
           <Button className="w-full" size="lg">
             Proceed to Checkout
             <ArrowRight className="ml-2 h-5 w-5" />

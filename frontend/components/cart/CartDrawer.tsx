@@ -1,10 +1,10 @@
 'use client';
 
 import Link from 'next/link';
-import { ShoppingBag, ArrowRight } from 'lucide-react';
+import { ShoppingBag, ArrowRight, X } from 'lucide-react';
+import * as Dialog from '@radix-ui/react-dialog';
 import {
   Sheet,
-  SheetContent,
   SheetHeader,
   SheetTitle,
   SheetDescription,
@@ -25,8 +25,10 @@ export function CartDrawer() {
 
   return (
     <Sheet open={isOpen} onOpenChange={(open) => !open && closeCart()}>
-      <SheetContent side="right" className="flex flex-col w-full sm:max-w-md">
-        <SheetHeader>
+      <Dialog.Portal>
+      <Dialog.Overlay className="fixed inset-0 z-50 bg-black/25 data-[state=open]:animate-in data-[state=open]:fade-in data-[state=closed]:animate-out data-[state=closed]:fade-out motion-reduce:animate-none" />
+      <Dialog.Content className="fixed left-4 right-4 top-28 z-50 mx-auto flex max-h-[calc(100dvh-144px)] max-w-md flex-col gap-4 overflow-hidden rounded-lg border bg-background p-4 text-foreground shadow-2xl data-[state=open]:animate-in data-[state=open]:fade-in data-[state=open]:zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out data-[state=open]:duration-150 motion-reduce:animate-none sm:left-auto sm:right-6 sm:w-[420px]">
+        <SheetHeader className="shrink-0 pr-10 text-left">
           <SheetTitle className="flex items-center gap-2">
             <ShoppingBag className="h-5 w-5 text-primary" />
             Your Cart
@@ -40,7 +42,7 @@ export function CartDrawer() {
 
         {items.length === 0 ? (
           /* Empty state */
-          <div className="flex-1 flex flex-col items-center justify-center gap-4 py-12">
+          <div className="flex flex-col items-center justify-center gap-3 py-5">
             <div className="h-20 w-20 rounded-full bg-muted flex items-center justify-center">
               <ShoppingBag className="h-10 w-10 text-muted-foreground" />
             </div>
@@ -60,7 +62,7 @@ export function CartDrawer() {
         ) : (
           <>
             {/* Item list */}
-            <div className="flex-1 overflow-y-auto -mx-6 px-6">
+            <div className="min-h-0 max-h-[40dvh] overflow-y-auto overscroll-contain">
               <div className="divide-y">
                 {items.map((item) => (
                   <CartItem key={item.product_id} item={item} />
@@ -71,7 +73,7 @@ export function CartDrawer() {
             <Separator />
 
             {/* Footer */}
-            <div className="space-y-4 pt-4">
+            <div className="shrink-0 space-y-3">
               <div className="flex items-center justify-between">
                 <span className="text-sm text-muted-foreground">Subtotal</span>
                 <span className="text-lg font-bold">
@@ -101,7 +103,9 @@ export function CartDrawer() {
             </div>
           </>
         )}
-      </SheetContent>
+        <Dialog.Close aria-label="Close cart" className="absolute right-3 top-3 flex h-10 w-10 items-center justify-center rounded-md hover:bg-muted"><X className="h-5 w-5" /></Dialog.Close>
+      </Dialog.Content>
+      </Dialog.Portal>
     </Sheet>
   );
 }

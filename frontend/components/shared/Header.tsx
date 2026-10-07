@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
   Clock,
+  Bell,
   ChevronDown,
   Eye,
   EyeOff,
@@ -18,12 +19,11 @@ import {
   Shield,
   ShoppingBasket,
   UserRound,
-  X,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from '@/components/ui/sheet';
 import { Badge } from '@/components/ui/badge';
 import { useCartStore } from '@/store/cart.store';
-import { useUIStore } from '@/store/ui.store';
 import { useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
 import { BrandLogo } from '@/components/shared/BrandLogo';
@@ -51,7 +51,6 @@ const CATEGORY_LINKS = [
 
 export function Header() {
   const itemCount = useCartStore((s) => s.getItemCount());
-  const openCart = useUIStore((s) => s.openCart);
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [accountMenuOpen, setAccountMenuOpen] = useState(false);
@@ -109,11 +108,7 @@ export function Header() {
           aria-label="Open menu"
           aria-expanded={mobileMenuOpen}
         >
-          {mobileMenuOpen ? (
-            <X className="h-5 w-5" />
-          ) : (
-            <Menu className="h-5 w-5" />
-          )}
+          <Menu className="h-5 w-5" />
         </Button>
 
         <div className="container flex items-center justify-between gap-4 pl-14 sm:pl-16 md:pl-0">
@@ -135,10 +130,9 @@ export function Header() {
         </nav>
 
         <div className="flex items-center gap-2">
-          <button
-            type="button"
+          <Link
+            href="/cart"
             className="relative flex h-10 w-10 items-center justify-center text-white transition-colors hover:text-crisp-200"
-            onClick={openCart}
             aria-label="Open cart"
             id="cart-button"
           >
@@ -151,7 +145,7 @@ export function Header() {
                 {itemCount}
               </Badge>
             )}
-          </button>
+          </Link>
 
           <NotificationBell enabled={sessionStatus === 'authenticated'} />
 
@@ -206,7 +200,7 @@ export function Header() {
                         <Store className="h-4 w-4 text-crisp-300" /> Shop
                       </Link>
                       <Link href="/notifications" role="menuitem" className="flex items-center gap-3 px-4 py-2.5 text-sm hover:bg-white/10" onClick={() => setAccountMenuOpen(false)}>
-                        <Heart className="h-4 w-4 text-crisp-300" /> Notifications
+                        <Bell className="h-4 w-4 text-crisp-300" /> Notifications
                       </Link>
                       <div className="my-1 border-t border-crisp-100" />
                       <button type="button" role="menuitem" className="flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm text-crisp-100 hover:bg-white/10" onClick={handleLogout}>
@@ -234,31 +228,19 @@ export function Header() {
         </div>
       </div>
 
-      {mobileMenuOpen && (
-        <div className="absolute left-0 top-full z-50 md:hidden">
-          <button
-            type="button"
-            className="fixed inset-0 cursor-default bg-transparent"
-            aria-label="Close menu"
-            onClick={() => setMobileMenuOpen(false)}
-          />
-
-          <aside className="relative ml-2 flex max-h-[calc(100vh-104px)] w-[min(84vw,300px)] flex-col overflow-y-auto border border-white/10 bg-[#071b10]/95 p-4 text-white shadow-2xl backdrop-blur-md sm:ml-4 md:hidden">
-            <div className="relative mb-5 pr-11">
+      <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
+          <SheetContent side="left" className="mobile-navigation flex w-[min(85vw,320px)] flex-col overflow-y-auto overscroll-contain border-white/10 bg-[#071b10] p-5 text-white data-[state=open]:duration-200 data-[state=closed]:duration-150">
+            <SheetHeader className="mb-4 text-left">
+              <SheetTitle className="text-white">CrispRun</SheetTitle>
+              <SheetDescription className="text-crisp-100">Your fresh market</SheetDescription>
+            </SheetHeader>
+            <div className="relative mb-5">
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <input
                 type="search"
                 placeholder="Search products..."
                 className="h-11 w-full border border-white/10 bg-white/10 pl-9 pr-3 text-sm outline-none transition-colors placeholder:text-crisp-100/60 focus:border-crisp-300"
               />
-              <button
-                type="button"
-                className="absolute right-0 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-md border border-white/10 text-white transition-colors hover:bg-white/10 hover:text-crisp-200"
-                aria-label="Close menu"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                <X className="h-5 w-5" />
-              </button>
             </div>
 
             <nav className="space-y-1">
@@ -288,7 +270,7 @@ export function Header() {
               </Link>
               <Link
                 href="/cart"
-                className="flex items-center gap-3 py-2.5 text-sm font-medium transition-colors hover:text-crisp-700"
+                className="flex w-full items-center gap-3 rounded px-2 py-2.5 text-sm font-medium text-crisp-100 transition-colors hover:bg-white/10 hover:text-white"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 <ShoppingBasket className="h-4 w-4" />
@@ -304,7 +286,7 @@ export function Header() {
                 className="flex items-center gap-3 py-2.5 text-sm font-medium transition-colors hover:text-crisp-700"
                 onClick={() => setMobileMenuOpen(false)}
               >
-                <Heart className="h-4 w-4" />
+                <Bell className="h-4 w-4" />
                 Notifications
               </Link>
               <Link
@@ -410,9 +392,8 @@ export function Header() {
                 </>
               )}
             </div>
-          </aside>
-        </div>
-      )}
+          </SheetContent>
+      </Sheet>
     </header>
   );
 }

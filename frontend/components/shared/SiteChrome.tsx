@@ -3,7 +3,7 @@
 import { usePathname } from 'next/navigation';
 import { Header } from '@/components/shared/Header';
 import { Footer } from '@/components/shared/Footer';
-import { CartDrawer } from '@/components/cart/CartDrawer';
+import { CartNotice } from '@/components/cart/CartNotice';
 import { FloatingCustomerTools } from '@/components/shared/FloatingCustomerTools';
 import { SessionProvider, SessionBoundary } from '@/components/auth/SessionProvider';
 
@@ -36,7 +36,7 @@ function ChromeContent({ children }: { children: React.ReactNode }) {
         <SessionBoundary>{children}</SessionBoundary>
       </main>
       {!hideFooter && <Footer />}
-      <CartDrawer />
+      <CartNotice />
       <FloatingCustomerTools />
     </>
   );

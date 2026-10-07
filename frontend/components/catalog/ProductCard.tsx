@@ -24,7 +24,7 @@ export function ProductCard({ product }: ProductCardProps) {
   const [isAdded, setIsAdded] = useState(false);
 
   const addItem = useCartStore((s) => s.addItem);
-  const openCart = useUIStore((s) => s.openCart);
+  const notifyCartAdded = useUIStore((s) => s.notifyCartAdded);
 
   const productImage = getProductImage(product);
   const estimatedTotal = product.price_per_kg * kg;
@@ -51,7 +51,7 @@ export function ProductCard({ product }: ProductCardProps) {
       setIsAdded(false);
     }, 1500);
 
-    openCart();
+    notifyCartAdded(product.name);
   };
 
   return (

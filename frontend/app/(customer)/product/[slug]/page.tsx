@@ -79,7 +79,7 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
   const [kg, setKg] = useState(p.min_kg);
   const [isAdded, setIsAdded] = useState(false);
   const addItem = useCartStore((s) => s.addItem);
-  const openCart = useUIStore((s) => s.openCart);
+  const notifyCartAdded = useUIStore((s) => s.notifyCartAdded);
 
   const lineTotal = calcLineTotal(p.price_per_kg, kg);
   const productImage = getProductImage(p);
@@ -98,7 +98,7 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
 
     setIsAdded(true);
     setTimeout(() => setIsAdded(false), 2000);
-    openCart();
+    notifyCartAdded(p.name);
   };
 
   return (

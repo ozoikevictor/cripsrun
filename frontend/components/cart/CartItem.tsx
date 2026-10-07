@@ -58,7 +58,7 @@ export function CartItem({ item }: CartItemProps) {
           {formatNaira(snap.price_per_kg)}/kg
         </p>
 
-        <div className="flex items-center justify-between">
+        <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2">
           <KgSelector
             value={item.kg_quantity}
             onChange={(kg) => updateKg(item.product_id, kg)}
@@ -67,7 +67,7 @@ export function CartItem({ item }: CartItemProps) {
             increment={snap.kg_increment}
             compact
           />
-          <span className="text-sm font-semibold tabular-nums">
+          <span className="ml-auto max-w-full break-words text-right text-sm font-semibold tabular-nums">
             {formatCurrency(lineTotal)}
           </span>
         </div>
