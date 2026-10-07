@@ -7,7 +7,6 @@ import { useRouter } from 'next/navigation';
 import { Bell, CheckCircle2, PackageCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { cn } from '@/lib/utils';
 
 interface NotificationItem {
   id: string;
@@ -104,15 +103,15 @@ export default function NotificationsPage() {
       </div>
 
       {isLoading ? (
-        <div className="rounded-xl border bg-background py-16 text-center text-muted-foreground">
+        <div className="py-16 text-center text-muted-foreground">
           Loading notifications...
         </div>
       ) : error ? (
-        <div className="rounded-xl border border-destructive/20 bg-destructive/10 py-16 text-center text-destructive">
+        <div role="alert" className="py-16 text-center text-destructive">
           {error}
         </div>
       ) : notifications.length === 0 ? (
-        <div className="rounded-xl border bg-background px-6 py-16 text-center shadow-sm">
+        <div className="px-6 py-16 text-center">
           <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-crisp-100 text-primary">
             <Bell className="h-8 w-8" />
           </div>
@@ -125,16 +124,13 @@ export default function NotificationsPage() {
           </Button>
         </div>
       ) : (
-        <div className="space-y-3">
+        <div className="divide-y divide-border">
           {notifications.map((notification) => (
             <div
               key={notification.id}
-              className={cn(
-                'rounded-xl border bg-background p-4 shadow-sm',
-                !notification.read && 'border-crisp-300 bg-crisp-50'
-              )}
+              className="py-5"
             >
-              <div className="flex items-start gap-4">
+              <div className="flex flex-wrap items-start gap-3 sm:gap-4">
                 <div className="mt-1 flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-crisp-100 text-primary">
                   {notification.read ? (
                     <CheckCircle2 className="h-5 w-5" />
@@ -142,7 +138,7 @@ export default function NotificationsPage() {
                     <PackageCheck className="h-5 w-5" />
                   )}
                 </div>
-                <div className="min-w-0 flex-1">
+                <div className="min-w-0 flex-1 break-words">
                   <div className="flex flex-wrap items-center gap-2">
                     <h2 className="font-semibold">{notification.title}</h2>
                     {!notification.read && <Badge>New</Badge>}
@@ -154,7 +150,7 @@ export default function NotificationsPage() {
                     {formatTime(notification.created_at)}
                   </p>
                 </div>
-                <div className="flex flex-shrink-0 flex-col gap-2">
+                <div className="flex w-full flex-wrap gap-2 pl-[52px] sm:w-auto sm:shrink-0 sm:flex-col sm:pl-0">
                   {notification.order_id && (
                     <Button asChild size="sm" variant="outline">
                       <Link

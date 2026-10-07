@@ -139,21 +139,21 @@ export function AdminNotifications() {
         </Button>
       </header>
 
-      {error && <p role="alert" className="rounded-md border border-destructive/30 bg-destructive/5 p-4 text-sm text-destructive">{error}</p>}
+      {error && <p role="alert" className="py-4 text-sm text-destructive">{error}</p>}
       {isLoading && notifications.length === 0 ? (
         <div className="flex min-h-48 items-center justify-center gap-2 text-sm text-muted-foreground">
           <Loader2 className="h-4 w-4 animate-spin" /> Loading alerts...
         </div>
       ) : notifications.length === 0 ? (
-        <div className="rounded-lg border border-dashed p-10 text-center">
+        <div className="py-10 text-center">
           <Bell className="mx-auto h-8 w-8 text-muted-foreground" />
           <p className="mt-3 font-medium">No order alerts yet</p>
           <p className="mt-1 text-sm text-muted-foreground">New customer orders will appear here.</p>
         </div>
       ) : (
-        <div className="space-y-4">
+        <div className="divide-y divide-border">
           {groups.map((group) => (
-            <article key={group.id} className={`rounded-lg border p-4 ${group.unreadCount > 0 ? 'border-primary/30 bg-primary/5' : 'bg-card'}`}>
+            <article key={group.id} className="py-5">
               <div className="flex flex-col gap-3 border-b pb-4 sm:flex-row sm:items-start sm:justify-between">
                 <div>
                   <div className="flex flex-wrap items-center gap-2">
@@ -178,11 +178,10 @@ export function AdminNotifications() {
                 </div>
               </div>
 
-              <div className="mt-4 space-y-4">
-                {group.items.map((notification, index) => (
-                  <div key={notification.id} className="relative pl-6">
-                    {index < group.items.length - 1 && <span className="absolute left-[7px] top-5 h-[calc(100%+0.25rem)] w-px bg-border" />}
-                    <span className={`absolute left-0 top-1.5 h-3.5 w-3.5 rounded-full border-2 ${notification.read ? 'border-muted-foreground bg-background' : 'border-primary bg-primary'}`} />
+              <div className="divide-y divide-border">
+                {group.items.map((notification) => (
+                  <div key={notification.id} className="relative break-words py-4 pl-6">
+                    <span className={`absolute left-0 top-5 h-3.5 w-3.5 rounded-full border-2 ${notification.read ? 'border-muted-foreground bg-background' : 'border-primary bg-primary'}`} />
                     <div className="flex flex-wrap items-center gap-2">
                       <h3 className="text-sm font-semibold">{notification.title}</h3>
                       {!notification.read && <Badge variant="secondary">New</Badge>}

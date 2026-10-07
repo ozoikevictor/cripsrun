@@ -1,7 +1,7 @@
 'use client';
 
 import { useRef, useState } from 'react';
-import { Camera, UserRound } from 'lucide-react';
+import { Camera, Trash2, UserRound } from 'lucide-react';
 import { useSession } from '@/components/auth/SessionProvider';
 import { apiUrl } from '@/lib/api';
 import { Button } from '@/components/ui/button';
@@ -55,11 +55,15 @@ export function ProfilePictureEditor() {
     finally { setBusy(false); }
   }
   return <div className="space-y-2">
-    <div className="flex flex-wrap items-center gap-3">
-      <ProfileAvatar className="h-16 w-16" />
+    <div className="flex w-40 flex-col items-center gap-2">
+      <button type="button" disabled={busy} aria-label="Change profile picture" aria-busy={busy} onClick={() => input.current?.click()} className="relative h-36 w-36 overflow-hidden rounded-full border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:opacity-60">
+        <ProfileAvatar className="h-full w-full" />
+        <span className="absolute inset-x-0 bottom-0 flex h-10 items-center justify-center gap-1.5 bg-black/65 text-sm font-semibold text-white">
+          <Camera className="h-4 w-4" />{busy ? 'Saving...' : 'Change'}
+        </span>
+      </button>
       <input ref={input} type="file" accept="image/jpeg,image/png,image/webp" aria-label="Choose profile picture" className="hidden" onChange={event => { const file = event.target.files?.[0]; if (file) void save(file); event.target.value = ''; }} />
-      <Button variant="outline" disabled={busy} onClick={() => input.current?.click()}><Camera className="mr-2 h-4 w-4" />{busy ? 'Saving...' : 'Change picture'}</Button>
-      {session?.photo_url && <Button variant="ghost" disabled={busy} onClick={() => void save(null)}>Remove</Button>}
+      {session?.photo_url && <Button type="button" variant="ghost" className="text-destructive hover:text-destructive" disabled={busy} onClick={() => void save(null)}><Trash2 className="mr-2 h-4 w-4" />Remove picture</Button>}
     </div>
     {message && <p role="status" className="text-sm">{message}</p>}
   </div>;
