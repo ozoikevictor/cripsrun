@@ -44,8 +44,6 @@ export function NotificationBell({ enabled, href = '/notifications' }: { enabled
     };
   }, [enabled]);
 
-  if (!enabled) return null;
-
   return (
     <Link
       href={href}
@@ -53,7 +51,7 @@ export function NotificationBell({ enabled, href = '/notifications' }: { enabled
       aria-label="Open notifications"
     >
       <Bell className="h-5 w-5" />
-      {unreadCount > 0 && (
+      {enabled && unreadCount > 0 && (
         <Badge className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full px-1 text-[10px]">
           {unreadCount > 99 ? '99+' : unreadCount}
         </Badge>

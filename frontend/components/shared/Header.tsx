@@ -111,8 +111,8 @@ export function Header() {
           <Menu className="h-5 w-5" />
         </Button>
 
-        <div className="container flex items-center justify-between gap-4 pl-14 sm:pl-16 md:pl-0">
-          <BrandLogo />
+        <div className="container flex items-center justify-between gap-2 pl-14 sm:pl-16 md:pl-0">
+          <BrandLogo compact showTagline={false} className="min-w-0 gap-2" />
 
         <nav className="hidden items-center gap-8 md:flex">
           {NAV_LINKS.map((link) => (
@@ -129,7 +129,7 @@ export function Header() {
           ))}
         </nav>
 
-        <div className="flex items-center gap-2">
+        <div className="flex shrink-0 items-center gap-2">
           <Link
             href="/cart"
             className="relative flex h-10 w-10 items-center justify-center text-white transition-colors hover:text-crisp-200"
@@ -147,12 +147,16 @@ export function Header() {
             )}
           </Link>
 
-          <NotificationBell enabled={sessionStatus === 'authenticated'} />
+          <div data-testid="header-notifications-slot" className="flex h-10 w-10 shrink-0 items-center justify-center">
+            <NotificationBell enabled={sessionStatus === 'authenticated'} />
+          </div>
 
           <div className="relative hidden md:block">
             <button
               type="button"
-              className="flex h-10 items-center gap-2 rounded-md px-2.5 text-sm font-semibold text-white transition-colors hover:bg-white/10 hover:text-crisp-200"
+              className="flex h-10 w-40 items-center gap-2 rounded-md px-2.5 text-sm font-semibold text-white transition-colors hover:bg-white/10 hover:text-crisp-200"
+              disabled={sessionStatus === 'loading'}
+              aria-busy={sessionStatus === 'loading'}
               aria-haspopup="menu"
               aria-expanded={accountMenuOpen}
               onClick={() => setAccountMenuOpen((open) => !open)}
@@ -160,9 +164,11 @@ export function Header() {
                 if (event.key === 'Escape') setAccountMenuOpen(false);
               }}
             >
-              <UserRound className="h-5 w-5" />
-              {session?.email ? session.email.split('@')[0] : 'Account'}
-              <ChevronDown className={cn('h-4 w-4 transition-transform', accountMenuOpen && 'rotate-180')} />
+              <UserRound className="h-5 w-5 shrink-0" />
+              <span className="min-w-0 flex-1 truncate text-left">
+                {sessionStatus === 'authenticated' && session?.email ? session.email.split('@')[0] : 'Account'}
+              </span>
+              <ChevronDown className={cn('h-4 w-4 shrink-0 transition-transform', accountMenuOpen && 'rotate-180')} />
             </button>
 
             {accountMenuOpen && (

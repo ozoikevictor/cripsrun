@@ -38,7 +38,14 @@ describe('customer UI regressions', () => {
     expect(container.querySelector('a')?.className).toContain('text-current');
     expect(container.textContent).toContain('99+');
     await act(async () => root.render(<NotificationBell enabled={false} />));
-    expect(container.querySelector('a')).toBeNull();
+    expect(container.querySelector('a[aria-label="Open notifications"]')).not.toBeNull();
+    expect(container.textContent).not.toContain('99+');
+  });
+  it('shows the bell to visitors without requesting private notifications', async () => {
+    await act(async () => root.render(<NotificationBell enabled={false} />));
+    expect(container.querySelector('.lucide-bell')).not.toBeNull();
+    expect(global.fetch).not.toHaveBeenCalled();
+    expect(container.querySelector('.animate-pulse')).toBeNull();
   });
   it('uses specific food pictures before broad keywords', () => {
     expect(getProductImage({ slug: 'new-dry-fish', name: 'Dry fish', image_urls: [] })).toContain('dry-fish');

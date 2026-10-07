@@ -69,6 +69,26 @@ describe('browser session lifecycle', () => {
     expect(container.querySelector('[data-status]')?.textContent).toBe('authenticated:admin');
   });
 
+  it.each([true, false])('reserves header controls without showing a guest account while checking (authenticated: %s)', async authenticated => {
+    const pending = deferred();
+    fetchMock.mockReturnValueOnce(pending.promise);
+    await act(async () => root.render(<SessionProvider><Header /></SessionProvider>));
+    const account = container.querySelector('button[aria-haspopup="menu"]') as HTMLButtonElement;
+    const slot = container.querySelector('[data-testid="header-notifications-slot"]')!;
+    expect(account.disabled).toBe(true);
+    expect(account.textContent).toContain('Account');
+    expect(container.querySelector('.animate-pulse')).toBeNull();
+    expect(account.className).toContain('w-40');
+    expect(slot.className).toContain('w-10');
+    const slotClass = slot.className;
+    const accountClass = account.className;
+    await act(async () => pending.resolve(reply(authenticated ? admin : null, authenticated)));
+    expect(account.disabled).toBe(false);
+    expect(account.className).toBe(accountClass);
+    expect(slot.className).toBe(slotClass);
+    expect(account.textContent).toContain(authenticated ? 'admin' : 'Account');
+  });
+
   it.each(['network', 'service'])('does not turn a temporary %s failure into logout', async failure => {
     fetchMock.mockResolvedValueOnce(reply(admin));
     await render();
