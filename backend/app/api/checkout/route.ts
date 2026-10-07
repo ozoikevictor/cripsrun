@@ -174,6 +174,7 @@ export async function POST(request: NextRequest) {
         vat_rate: pricing.vat_rate,
         vat_amount: pricing.vat_amount,
         total_amount: pricing.total_amount,
+        currency: 'NGN',
         delivery_date: new Date(delivery_date),
         delivery_type: delivery_type as 'SINGLE' | 'SPLIT',
         delivery_notes: delivery_notes ?? null,
@@ -195,6 +196,7 @@ export async function POST(request: NextRequest) {
 
     // 8. Initialize Paystack
     const paystackRef = `CR_${orderId}_${Date.now()}`;
+    await db.collection('orders').doc(orderId).update({ payment_reference: paystackRef });
     const paystackResult = await initializePaystackTransaction({
       email: userData.email,
       amount: pricing.total_amount,   // kobo
@@ -209,10 +211,7 @@ export async function POST(request: NextRequest) {
       callback_url: `${process.env.NEXT_PUBLIC_APP_URL}/orders/${orderId}?payment=success`,
     });
 
-    // Store payment reference
-    await db.collection('orders').doc(orderId).update({
-      payment_reference: paystackRef,
-    });
+    if (!paystackResult.status || paystackResult.data.reference !== paystackRef) throw new Error('Payment initialization failed');
 
     return NextResponse.json({
       success: true,

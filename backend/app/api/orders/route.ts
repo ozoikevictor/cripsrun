@@ -1,35 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { z } from 'zod';
 import { authenticateRequest } from '@/lib/auth/server';
-import { createOrder, generateOrderNumber } from '@/lib/firestore/orders';
-
-const CreateOrderSchema = z.object({
-  items: z
-    .array(
-      z.object({
-        product_id: z.string().min(1),
-        product_name: z.string().min(1),
-        product_type: z.string().min(1),
-        price_per_kg: z.number().nonnegative(),
-        kg_quantity: z.number().positive(),
-        line_total: z.number().nonnegative(),
-      })
-    )
-    .min(1),
-  subtotal: z.number().nonnegative(),
-  delivery_fee: z.number().nonnegative(),
-  service_charge: z.number().nonnegative(),
-  vat_rate: z.number().nonnegative(),
-  vat_amount: z.number().nonnegative(),
-  total_amount: z.number().nonnegative(),
-  address: z.object({
-    full_address: z.string().min(1),
-    city: z.string().optional(),
-    lga: z.string().optional(),
-    instructions: z.string().nullable().optional(),
-  }),
-  delivery_date: z.string().min(1),
-});
 
 function toIsoString(value: unknown): string | null {
   if (!value) return null;
@@ -67,60 +37,8 @@ function getTimeFromValue(value: unknown): number {
 
 export async function POST(request: NextRequest) {
   const user = await authenticateRequest(request.headers);
-  if (!user) {
-    return NextResponse.json(
-      { success: false, error: 'Unauthorized' },
-      { status: 401 }
-    );
-  }
-
-  const body = await request.json();
-  const parsed = CreateOrderSchema.safeParse(body);
-  if (!parsed.success) {
-    return NextResponse.json(
-      { success: false, error: 'Validation failed', details: parsed.error.flatten() },
-      { status: 422 }
-    );
-  }
-
-  try {
-    const orderNumber = generateOrderNumber();
-    const orderId = await createOrder(
-      {
-        order_number: orderNumber,
-        user_id: user.uid,
-        user_email: user.email ?? '',
-        items: parsed.data.items,
-        subtotal: parsed.data.subtotal,
-        delivery_fee: parsed.data.delivery_fee,
-        service_charge: parsed.data.service_charge,
-        vat_rate: parsed.data.vat_rate,
-        vat_amount: parsed.data.vat_amount,
-        total_amount: parsed.data.total_amount,
-        address: parsed.data.address,
-        status: 'PENDING_PAYMENT',
-        delivery_date: new Date(parsed.data.delivery_date),
-      },
-      parsed.data.items
-    );
-
-    return NextResponse.json(
-      {
-        success: true,
-        data: {
-          order_id: orderId,
-          order_number: orderNumber,
-        },
-      },
-      { status: 201 }
-    );
-  } catch (error) {
-    console.error('[Orders API] Create order error:', error);
-    return NextResponse.json(
-      { success: false, error: 'Failed to create order' },
-      { status: 500 }
-    );
-  }
+  if (!user) return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
+  return NextResponse.json({ success: false, error: 'Create orders through checkout so prices are calculated on the server.' }, { status: 405, headers: { Allow: 'GET' } });
 }
 
 export async function GET(request: NextRequest) {
