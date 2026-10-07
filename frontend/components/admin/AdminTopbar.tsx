@@ -13,9 +13,11 @@ import {
   Settings,
   Shield,
   Store,
+  LogOut,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { NotificationBell } from '@/components/notifications/NotificationBell';
+import { useSession } from '@/components/auth/SessionProvider';
 
 interface AdminTopbarProps {
   adminEmail?: string;
@@ -25,6 +27,7 @@ interface AdminTopbarProps {
 
 export function AdminTopbar({ adminEmail, menuOpen, onMenuToggle }: AdminTopbarProps) {
   const router = useRouter();
+  const { logout } = useSession();
   const pathname = usePathname();
   const [searchQuery, setSearchQuery] = useState('');
   const [settingsOpen, setSettingsOpen] = useState(false);
@@ -101,11 +104,14 @@ export function AdminTopbar({ adminEmail, menuOpen, onMenuToggle }: AdminTopbarP
           />
         </form>
 
-        <Button asChild variant="secondary" className="hidden h-10 gap-2 rounded-full px-4 lg:inline-flex">
-          <Link href="/catalog" target="_blank">
+        <Button asChild variant="secondary" className="h-10 gap-2 px-3">
+          <Link href="/catalog">
             <Store className="h-4 w-4" />
-            Store online
+            <span className="hidden sm:inline">View Store</span>
           </Link>
+        </Button>
+        <Button variant="ghost" size="icon" onClick={logout} aria-label="Log out" title="Log out">
+          <LogOut className="h-4 w-4" />
         </Button>
 
         <div className="relative">

@@ -94,6 +94,13 @@
 }
 
 @layer utilities {
+  .auth-page p.text-muted-foreground {
+    color: #dcfce7;
+  }
+
+  .auth-page a.text-primary {
+    color: #86efac;
+  }
   /* Hide scrollbar but keep functionality */
   .scrollbar-hide {
     -ms-overflow-style: none;

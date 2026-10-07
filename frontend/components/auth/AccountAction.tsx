@@ -1,8 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { apiUrl } from '@/lib/api';
+import { useSession } from '@/components/auth/SessionProvider';
 import { Button } from '@/components/ui/button';
 
 interface AccountActionProps {
@@ -10,32 +9,7 @@ interface AccountActionProps {
 }
 
 export function AccountAction({ className }: AccountActionProps) {
-  const [status, setStatus] = useState<'loading' | 'authenticated' | 'guest'>('loading');
-
-  useEffect(() => {
-    let active = true;
-
-    fetch(apiUrl('/api/auth/session'), {
-      credentials: 'include',
-      cache: 'no-store',
-    })
-      .then(async (response) => {
-        if (!response.ok) {
-          if (active) setStatus('guest');
-          return;
-        }
-
-        const payload = await response.json();
-        if (active) setStatus(payload.success ? 'authenticated' : 'guest');
-      })
-      .catch(() => {
-        if (active) setStatus('guest');
-      });
-
-    return () => {
-      active = false;
-    };
-  }, []);
+  const { status } = useSession();
 
   if (status === 'loading') return null;
 

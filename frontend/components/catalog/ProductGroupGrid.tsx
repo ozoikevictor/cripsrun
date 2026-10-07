@@ -2,10 +2,9 @@
 
 import { useMemo, useState } from 'react';
 import Image from 'next/image';
-import { ChevronDown, Leaf, PackageOpen, ShoppingBasket } from 'lucide-react';
+import { ChevronDown, Leaf, PackageOpen } from 'lucide-react';
 
 import { ProductCard } from './ProductCard';
-import { Button } from '@/components/ui/button';
 import { getProductImage } from '@/lib/products/images';
 import { cn } from '@/lib/utils';
 import type { ProductDocument } from '@/types/product.types';
@@ -241,7 +240,7 @@ export function ProductGroupGrid({ products }: ProductGroupGridProps) {
   }
 
   return (
-    <div className="mx-auto max-w-5xl space-y-3 md:space-y-4">
+    <div className="space-y-4">
       {groups.map(({ family, products: groupProducts }) => {
         const isOpen = openGroups[family.id] ?? groups.length === 1;
         const leadProduct = groupProducts[0];
@@ -250,11 +249,13 @@ export function ProductGroupGrid({ products }: ProductGroupGridProps) {
         return (
           <section
             key={family.id}
-            className="overflow-hidden rounded-xl border border-white/10 bg-white/95 text-crisp-950 shadow-sm transition-shadow hover:shadow-md"
+            className="border-b border-white/15 pb-4"
           >
             <button
               type="button"
-              className="flex w-full items-center gap-3 p-3 text-left transition-colors hover:bg-crisp-50/70 md:gap-4 md:p-4"
+              className="flex w-full items-center gap-3 py-3 text-left text-white transition-colors hover:text-crisp-200"
+              aria-expanded={isOpen}
+              aria-controls={`products-${family.id}`}
               onClick={() =>
                 setOpenGroups((current) => ({
                   ...current,
@@ -262,7 +263,7 @@ export function ProductGroupGrid({ products }: ProductGroupGridProps) {
                 }))
               }
             >
-              <div className="relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-lg bg-muted md:h-20 md:w-20">
+              <div className="relative h-12 w-12 flex-shrink-0 overflow-hidden rounded-md bg-muted">
                 {image ? (
                   <Image
                     src={image}
@@ -270,7 +271,7 @@ export function ProductGroupGrid({ products }: ProductGroupGridProps) {
                     fill
                     unoptimized
                     className="object-cover"
-                    sizes="80px"
+                    sizes="48px"
                   />
                 ) : (
                   <div className="flex h-full items-center justify-center">
@@ -281,61 +282,28 @@ export function ProductGroupGrid({ products }: ProductGroupGridProps) {
 
               <div className="min-w-0 flex-1">
                 <div className="flex flex-wrap items-center gap-2">
-                  <h3 className="text-lg font-bold md:text-xl">{family.label}</h3>
-                  <span className="rounded-full bg-crisp-100 px-2.5 py-1 text-xs font-semibold text-primary">
+                  <h3 className="text-base font-semibold">{family.label}</h3>
+                  <span className="text-xs text-crisp-100/80">
                     {groupProducts.length} option
                     {groupProducts.length === 1 ? '' : 's'}
                   </span>
                 </div>
-                <p className="mt-1 line-clamp-2 text-sm leading-5 text-muted-foreground md:max-w-2xl">
+                <p className="mt-1 line-clamp-2 text-xs leading-4 text-crisp-100/80 md:max-w-2xl">
                   {family.description}
                 </p>
               </div>
 
-              <div className="hidden items-center gap-2 rounded-full border bg-white px-3 py-2 text-sm font-semibold text-primary shadow-sm sm:flex">
-                <ShoppingBasket className="h-4 w-4" />
-                {isOpen ? 'Hide items' : 'View items'}
-                <ChevronDown
-                  className={cn(
-                    'h-4 w-4 flex-shrink-0 transition-transform',
-                    isOpen && 'rotate-180'
-                  )}
-                />
-              </div>
               <ChevronDown
                 className={cn(
-                  'h-5 w-5 flex-shrink-0 text-muted-foreground transition-transform sm:hidden',
+                  'h-5 w-5 flex-shrink-0 text-crisp-200 transition-transform',
                   isOpen && 'rotate-180'
                 )}
               />
             </button>
 
             {isOpen && (
-              <div className="border-t bg-gradient-to-b from-crisp-50/70 to-white p-3 md:p-4">
-                <div className="mb-4 flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
-                  <div>
-                    <p className="text-base font-semibold">Choose exact item</p>
-                    <p className="text-sm text-muted-foreground">
-                      Pick the part, size, or market measure. The price updates with your quantity.
-                    </p>
-                  </div>
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    className="w-fit"
-                    onClick={() =>
-                      setOpenGroups((current) => ({
-                        ...current,
-                        [family.id]: false,
-                      }))
-                    }
-                  >
-                    Close
-                  </Button>
-                </div>
-
-                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+              <div id={`products-${family.id}`} className="pt-2">
+                <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
                   {groupProducts.map((product) => (
                     <ProductCard key={product.id} product={product} />
                   ))}

@@ -8,7 +8,7 @@ const config = {
   },
   transform: {
     '^.+\\.tsx?$': ['ts-jest', {
-      tsconfig: 'tsconfig.json',
+      tsconfig: { jsx: 'react-jsx' },
     }],
   },
   testMatch: ['**/*.test.ts', '**/*.test.tsx'],

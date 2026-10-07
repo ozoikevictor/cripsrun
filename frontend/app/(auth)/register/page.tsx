@@ -60,7 +60,7 @@ function RegisterForm() {
       }
 
       setPassword('');
-      localStorage.setItem('crisprun-session-present', 'true');
+      localStorage.removeItem('crisprun-session-present');
       router.replace(searchParams.get('from') || '/catalog');
       router.refresh();
     } catch (error) {

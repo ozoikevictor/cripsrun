@@ -1,52 +1,13 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { apiUrl } from '@/lib/api';
+import { useState } from 'react';
+import { useSession } from '@/components/auth/SessionProvider';
 import { AdminSidebar } from '@/components/admin/AdminSidebar';
 import { AdminTopbar } from '@/components/admin/AdminTopbar';
 
-interface AdminSession {
-  email?: string;
-  uid?: string;
-  role?: string;
-}
-
 export function AdminShell({ children }: { children: React.ReactNode }) {
-  const router = useRouter();
-  const [session, setSession] = useState<AdminSession | null>(null);
+  const { session } = useSession();
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
-
-  useEffect(() => {
-    let active = true;
-
-    fetch(apiUrl('/api/auth/session'), {
-      credentials: 'include',
-      cache: 'no-store',
-    })
-      .then(async (response) => {
-        if (response.status === 401) {
-          router.replace('/login?from=%2Fadmin%2Fdashboard');
-          return null;
-        }
-        return response.json();
-      })
-      .then((payload) => {
-        if (!active || !payload) return;
-        if (payload.success && payload.data?.role === 'admin') {
-          setSession(payload.data);
-        } else if (payload.success) {
-          router.replace('/catalog');
-        }
-      })
-      .catch(() => {
-        if (active) setSession(null);
-      });
-
-    return () => {
-      active = false;
-    };
-  }, [router]);
 
   return (
     <div className="flex h-screen overflow-hidden bg-muted/40">

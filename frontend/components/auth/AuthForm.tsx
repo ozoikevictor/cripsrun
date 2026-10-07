@@ -15,7 +15,7 @@ interface AuthFormProps {
 
 export function AuthForm({ title, subtitle, children, footer, error }: AuthFormProps) {
   return (
-    <div className="site-deep-bg flex min-h-screen flex-col px-4 text-white">
+    <div className="site-deep-bg auth-page flex min-h-screen flex-col px-4 text-white">
       <header className="mx-auto flex w-full max-w-5xl items-center justify-between py-5">
         <BrandLogo showTagline={false} compact />
         <Link
@@ -32,7 +32,7 @@ export function AuthForm({ title, subtitle, children, footer, error }: AuthFormP
           <div className="space-y-6 rounded-xl border border-white/10 bg-[#0b1710]/92 p-6 shadow-2xl shadow-crisp-950/30 sm:p-8">
             <div className="space-y-1 text-center">
               <h1 className="text-2xl font-bold">{title}</h1>
-              <p className="text-sm text-muted-foreground">{subtitle}</p>
+              <p className="text-sm text-crisp-100/80">{subtitle}</p>
             </div>
 
             {error && (
@@ -45,14 +45,14 @@ export function AuthForm({ title, subtitle, children, footer, error }: AuthFormP
           </div>
 
           {footer && (
-            <div className="text-center text-sm text-muted-foreground">
+            <div className="text-center text-sm text-crisp-100/80">
               {footer}
             </div>
           )}
         </div>
       </main>
 
-      <footer className="py-5 text-center text-xs text-muted-foreground">
+      <footer className="py-5 text-center text-xs text-crisp-100/80">
         Fresh food, thoughtfully delivered.
       </footer>
     </div>

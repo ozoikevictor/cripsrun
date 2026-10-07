@@ -46,7 +46,7 @@ function LoginForm() {
       }
 
       setPassword('');
-      localStorage.setItem('crisprun-session-present', 'true');
+      localStorage.removeItem('crisprun-session-present');
       const defaultDestination =
         payload.data?.role === 'admin' ? '/admin/dashboard' : '/catalog';
       router.replace(searchParams.get('from') || defaultDestination);

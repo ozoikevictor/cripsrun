@@ -54,7 +54,7 @@ export function KgSelector({
       </Button>
 
       <span
-        className={`${compact ? 'min-w-[3.5rem] text-xs' : 'min-w-[4.5rem] text-sm'} text-center font-semibold tabular-nums`}
+        className={`${compact ? 'w-10 break-words text-xs' : 'min-w-[4.5rem] text-sm'} text-center font-semibold tabular-nums`}
       >
         {formatKg(value)}
       </span>

@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { ShoppingCart, Clock, Leaf, ArrowUpRight, PackageCheck } from 'lucide-react';
+import { ShoppingCart, Clock, Leaf, ArrowUpRight } from 'lucide-react';
 
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -56,12 +56,12 @@ export function ProductCard({ product }: ProductCardProps) {
 
   return (
     <Card
-      className="group overflow-hidden rounded-2xl border border-white/10 bg-white/95 text-crisp-950 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
+      className="group min-w-0 overflow-hidden rounded-lg border border-white/15 bg-white/95 text-crisp-950 shadow-none transition-colors hover:border-crisp-300"
       data-testid="product-card"
     >
       {/* Product Image */}
       <Link href={`/product/${product.slug}`}>
-        <div className="relative aspect-[4/3] overflow-hidden bg-muted">
+        <div className="relative aspect-[3/2] overflow-hidden bg-muted">
 
           {productImage ? (
             <Image
@@ -71,7 +71,7 @@ export function ProductCard({ product }: ProductCardProps) {
               unoptimized
               priority={product.is_featured}
               className="object-cover transition-transform duration-500 group-hover:scale-105"
-              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+              sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
             />
           ) : (
             <div className="flex h-full items-center justify-center bg-gradient-to-br from-crisp-50 to-crisp-100">
@@ -80,7 +80,7 @@ export function ProductCard({ product }: ProductCardProps) {
           )}
 
           {/* Badges */}
-          <div className="absolute top-2 left-2 flex gap-1.5">
+          <div className="absolute top-1 left-1 flex flex-col items-start gap-1">
             {product.product_type === 'PERISHABLE' && (
               <Badge
                 variant="warning"
@@ -105,7 +105,7 @@ export function ProductCard({ product }: ProductCardProps) {
           {product.stock_kg <= product.low_stock_threshold && (
             <Badge
               variant="destructive"
-              className="absolute top-2 right-2 text-[10px]"
+              className="absolute bottom-1 right-1 text-[10px]"
             >
               Low Stock
             </Badge>
@@ -119,46 +119,39 @@ export function ProductCard({ product }: ProductCardProps) {
       </Link>
 
       {/* Product Information */}
-      <CardContent className="space-y-4 p-4">
+      <CardContent className="space-y-2 p-2 sm:p-3">
 
         {/* Name & Price */}
-        <div className="min-h-[112px]">
+        <div className="min-w-0">
           <Link href={`/product/${product.slug}`}>
-            <h3 className="line-clamp-2 text-base font-bold leading-tight transition-colors hover:text-primary">
+            <h3 className="min-h-10 line-clamp-2 break-words text-sm font-semibold leading-5 transition-colors hover:text-primary">
               {product.name}
             </h3>
           </Link>
 
-          <p className="mt-1 line-clamp-2 text-xs leading-relaxed text-muted-foreground">
-            {product.description}
-          </p>
 
-          <div className="mt-2 flex items-baseline gap-1.5">
-            <span className="text-xl font-bold text-primary">
+          <div className="mt-1 flex flex-wrap items-baseline gap-1">
+            <span className="text-sm font-bold text-crisp-700 sm:text-base">
               {formatNaira(product.price_per_kg)}
             </span>
 
-            <span className="text-xs text-muted-foreground">
+            <span className="text-xs text-crisp-800">
               /kg
             </span>
           </div>
 
-          <div className="mt-2 flex flex-wrap gap-2 text-xs">
-            <span className="rounded-full bg-crisp-50 px-2.5 py-1 font-medium text-primary">
+          <div className="mt-1 text-xs text-crisp-800">
+            <span>
               Min {formatKg(product.min_kg)}
-            </span>
-            <span className="inline-flex items-center gap-1 rounded-full bg-muted px-2.5 py-1 font-medium text-muted-foreground">
-              <PackageCheck className="h-3 w-3" />
-              {formatKg(product.stock_kg)} left
             </span>
           </div>
         </div>
 
         {/* Kg Selector + Add To Cart */}
-        <div className="rounded-xl border bg-muted/30 p-3">
-          <div className="mb-3 flex items-center justify-between gap-3">
+        <div className="border-t border-crisp-950/10 pt-2">
+          <div className="mb-2 flex flex-col items-start gap-2">
             <div>
-              <p className="text-xs font-medium text-muted-foreground">
+              <p className="text-xs font-medium text-crisp-800">
                 Your quantity
               </p>
               <p className="text-sm font-bold">{formatNaira(estimatedTotal)}</p>

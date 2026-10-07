@@ -5,8 +5,13 @@ import { Header } from '@/components/shared/Header';
 import { Footer } from '@/components/shared/Footer';
 import { CartDrawer } from '@/components/cart/CartDrawer';
 import { FloatingCustomerTools } from '@/components/shared/FloatingCustomerTools';
+import { SessionProvider, SessionBoundary } from '@/components/auth/SessionProvider';
 
 export function SiteChrome({ children }: { children: React.ReactNode }) {
+  return <SessionProvider><ChromeContent>{children}</ChromeContent></SessionProvider>;
+}
+
+function ChromeContent({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
 
   const isPlainPage =
@@ -21,14 +26,14 @@ export function SiteChrome({ children }: { children: React.ReactNode }) {
     pathname.startsWith('/track/');
 
   if (isPlainPage) {
-    return <>{children}</>;
+    return <SessionBoundary>{children}</SessionBoundary>;
   }
 
   return (
     <>
       <Header />
       <main className="site-deep-bg flex-1 text-white">
-        {children}
+        <SessionBoundary>{children}</SessionBoundary>
       </main>
       {!hideFooter && <Footer />}
       <CartDrawer />

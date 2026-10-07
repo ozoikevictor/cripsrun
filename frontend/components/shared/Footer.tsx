@@ -1,43 +1,14 @@
 'use client';
 
-import { apiUrl } from '@/lib/api';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { Mail, MapPin, Phone } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { BrandLogo } from '@/components/shared/BrandLogo';
+import { useSession } from '@/components/auth/SessionProvider';
 
 export function Footer() {
-  const router = useRouter();
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-  useEffect(() => {
-    async function loadSession() {
-      try {
-        const response = await fetch(apiUrl('/api/auth/session'), {
-          credentials: 'include',
-          cache: 'no-store',
-        });
-        setIsLoggedIn(response.ok);
-      } catch {
-        setIsLoggedIn(false);
-      }
-    }
-
-    loadSession();
-  }, []);
-
-  const handleLogout = async () => {
-    await fetch(apiUrl('/api/auth/session'), {
-      method: 'DELETE',
-      credentials: 'include',
-    });
-    localStorage.removeItem('crisprun-session-present');
-    setIsLoggedIn(false);
-    router.push('/login');
-    router.refresh();
-  };
+  const { status, logout: handleLogout } = useSession();
+  const isLoggedIn = status === 'authenticated';
 
   return (
     <footer className="border-t border-white/10 bg-[#020b07] text-crisp-50">

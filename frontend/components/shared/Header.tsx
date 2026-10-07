@@ -1,9 +1,7 @@
 'use client';
 
-import { apiUrl } from '@/lib/api';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useRouter } from 'next/navigation';
 import {
   Clock,
   ChevronDown,
@@ -17,6 +15,7 @@ import {
   PackageCheck,
   Search,
   Store,
+  Shield,
   ShoppingBasket,
   UserRound,
   X,
@@ -29,6 +28,7 @@ import { useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
 import { BrandLogo } from '@/components/shared/BrandLogo';
 import { NotificationBell } from '@/components/notifications/NotificationBell';
+import { useSession } from '@/components/auth/SessionProvider';
 
 const NAV_LINKS = [
   { label: 'Shop', href: '/catalog' },
@@ -53,13 +53,11 @@ export function Header() {
   const itemCount = useCartStore((s) => s.getItemCount());
   const openCart = useUIStore((s) => s.openCart);
   const pathname = usePathname();
-  const router = useRouter();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [accountMenuOpen, setAccountMenuOpen] = useState(false);
   const [eyeComfortMode, setEyeComfortMode] = useState(false);
   const [mounted, setMounted] = useState(false);
-  const [session, setSession] = useState<{ email?: string; role?: string } | null>(null);
-  const [sessionStatus, setSessionStatus] = useState<'loading' | 'authenticated' | 'guest'>('loading');
+  const { session, status: sessionStatus, logout } = useSession();
 
   // Prevent hydration mismatch — cart count comes from localStorage
   useEffect(() => {
@@ -67,44 +65,7 @@ export function Header() {
     const savedMode = localStorage.getItem('crisprun-eye-comfort') === 'true';
     setEyeComfortMode(savedMode);
     document.documentElement.classList.toggle('dark', savedMode);
-    setSessionStatus(
-      localStorage.getItem('crisprun-session-present') === 'true' ? 'authenticated' : 'loading'
-    );
   }, []);
-
-  useEffect(() => {
-    async function loadSession() {
-      try {
-        const response = await fetch(apiUrl('/api/auth/session'), {
-          credentials: 'include',
-          cache: 'no-store',
-        });
-
-        if (!response.ok) {
-          setSession(null);
-          setSessionStatus('guest');
-          localStorage.removeItem('crisprun-session-present');
-          return;
-        }
-
-        const payload = await response.json();
-        if (payload.success) {
-          setSession(payload.data);
-          setSessionStatus('authenticated');
-          localStorage.setItem('crisprun-session-present', 'true');
-        } else {
-          setSession(null);
-          setSessionStatus('guest');
-          localStorage.removeItem('crisprun-session-present');
-        }
-      } catch {
-        setSession(null);
-        setSessionStatus('guest');
-      }
-    }
-
-    loadSession();
-  }, [pathname]);
 
   useEffect(() => {
     setMobileMenuOpen(false);
@@ -118,16 +79,9 @@ export function Header() {
   }, [eyeComfortMode, mounted]);
 
   const handleLogout = async () => {
-    await fetch(apiUrl('/api/auth/session'), {
-      method: 'DELETE',
-      credentials: 'include',
-    });
-    setSession(null);
-    setSessionStatus('guest');
-    localStorage.removeItem('crisprun-session-present');
     setMobileMenuOpen(false);
-    router.push('/login');
-    router.refresh();
+    setAccountMenuOpen(false);
+    await logout();
   };
 
   return (
@@ -240,6 +194,11 @@ export function Header() {
                       <Link href="/account" role="menuitem" className="flex items-center gap-3 px-4 py-2.5 text-sm hover:bg-white/10" onClick={() => setAccountMenuOpen(false)}>
                         <UserRound className="h-4 w-4 text-crisp-300" /> My Profile
                       </Link>
+                      {session?.role === 'admin' && (
+                        <Link href="/admin/dashboard" role="menuitem" className="flex items-center gap-3 px-4 py-2.5 text-sm hover:bg-white/10" onClick={() => setAccountMenuOpen(false)}>
+                          <Shield className="h-4 w-4 text-crisp-300" /> Admin Dashboard
+                        </Link>
+                      )}
                       <Link href="/orders" role="menuitem" className="flex items-center gap-3 px-4 py-2.5 text-sm hover:bg-white/10" onClick={() => setAccountMenuOpen(false)}>
                         <PackageCheck className="h-4 w-4 text-crisp-300" /> My Orders
                       </Link>
@@ -435,13 +394,20 @@ export function Header() {
               )}
 
               {sessionStatus === 'authenticated' && (
+                <>
+                {session?.role === 'admin' && (
+                  <Link href="/admin/dashboard" className="flex items-center gap-3 py-2 text-sm font-medium hover:text-crisp-200" onClick={() => setMobileMenuOpen(false)}>
+                    <Shield className="h-4 w-4" /> Admin Dashboard
+                  </Link>
+                )}
                 <button
                   type="button"
-                  className="block py-2 text-left text-sm font-medium text-crisp-900 transition-colors hover:text-crisp-700"
+                  className="block py-2 text-left text-sm font-medium text-crisp-100 transition-colors hover:text-white"
                   onClick={handleLogout}
                 >
                   Sign Out
                 </button>
+                </>
               )}
             </div>
           </aside>

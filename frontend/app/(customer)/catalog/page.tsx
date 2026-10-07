@@ -377,8 +377,8 @@ export default function CatalogPage() {
             </div>
           </div>
 
-          <div className="site-soft-panel rounded-xl p-3">
-            <div className="mb-3 flex items-center gap-2 px-1 text-sm font-medium text-crisp-700">
+          <div className="border-b border-white/15 pb-3">
+            <div className="mb-3 flex items-center gap-2 text-sm font-medium text-crisp-100">
               <SlidersHorizontal className="h-4 w-4" />
               Choose a section
             </div>

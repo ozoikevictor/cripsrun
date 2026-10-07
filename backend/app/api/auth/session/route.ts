@@ -7,6 +7,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 
+export const dynamic = 'force-dynamic';
+
 interface DecodedSessionToken {
   uid: string;
   email?: string;
@@ -125,13 +127,12 @@ export async function POST(request: NextRequest) {
     const decoded = await verifySessionToken(idToken);
     const role = await getRoleFromFirestore(decoded.uid);
 
-    // Set httpOnly session cookie (expires in 14 days)
+    // Authentication lasts for the current browser session.
     const cookieStore = cookies();
     cookieStore.set('session', idToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
-      maxAge: 60 * 60 * 24 * 14, // 14 days
       path: '/',
     });
 
@@ -164,5 +165,7 @@ export async function DELETE() {
   const cookieStore = cookies();
   cookieStore.delete('session');
 
-  return NextResponse.json({ success: true, message: 'Logged out' });
+  return NextResponse.json({ success: true, message: 'Logged out' }, {
+    headers: { 'Cache-Control': 'no-store' },
+  });
 }

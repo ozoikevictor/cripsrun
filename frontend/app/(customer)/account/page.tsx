@@ -10,6 +10,7 @@ import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
 import { User, Phone, Mail, MapPin, Shield, LogOut } from 'lucide-react';
+import { useSession } from '@/components/auth/SessionProvider';
 
 interface AccountAddress {
   id: string;
@@ -31,6 +32,7 @@ interface AccountUser {
 
 export default function AccountPage() {
   const router = useRouter();
+  const { logout: handleLogout } = useSession();
   const [user, setUser] = useState<AccountUser | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [name, setName] = useState('');
@@ -65,12 +67,6 @@ export default function AccountPage() {
 
     loadProfile();
   }, []);
-
-  const handleLogout = async () => {
-    await fetch(apiUrl('/api/auth/session'), { method: 'DELETE', credentials: 'include' });
-    router.push('/login');
-    router.refresh();
-  };
 
   if (isLoading) {
     return (

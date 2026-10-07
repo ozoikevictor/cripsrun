@@ -57,7 +57,9 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(loginUrl);
   }
 
-  return NextResponse.next();
+  const response = NextResponse.next();
+  response.headers.set('Cache-Control', 'private, no-store, max-age=0');
+  return response;
 }
 
 export const config = {

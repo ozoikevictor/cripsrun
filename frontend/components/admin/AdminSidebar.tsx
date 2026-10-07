@@ -19,8 +19,7 @@ import {
   X,
 } from 'lucide-react';
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { apiUrl } from '@/lib/api';
+import { useSession } from '@/components/auth/SessionProvider';
 import { Button } from '@/components/ui/button';
 import { BrandLogo } from '@/components/shared/BrandLogo';
 
@@ -42,21 +41,8 @@ interface AdminSidebarProps {
 
 export function AdminSidebar({ adminEmail, mobileOpen, onMobileClose }: AdminSidebarProps) {
   const pathname = usePathname();
-  const router = useRouter();
+  const { logout: handleLogout } = useSession();
   const [collapsed, setCollapsed] = useState(false);
-
-  const handleLogout = async () => {
-    try {
-      await fetch(apiUrl('/api/auth/session'), {
-        method: 'DELETE',
-        credentials: 'include',
-      });
-    } finally {
-      localStorage.removeItem('crisprun-session-present');
-      router.replace('/login');
-      router.refresh();
-    }
-  };
 
   return (
     <>
