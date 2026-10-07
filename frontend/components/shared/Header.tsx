@@ -43,7 +43,22 @@ export function Header() {
   const [accountMenuOpen, setAccountMenuOpen] = useState(false);
   const [eyeComfortMode, setEyeComfortMode] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [viewportTop, setViewportTop] = useState(0);
   const { session, status: sessionStatus, logout } = useSession();
+
+  useEffect(() => {
+    const viewport = window.visualViewport;
+    if (!viewport) return;
+    // iOS can pan the visual viewport independently when the keyboard opens.
+    const update = () => setViewportTop(Math.max(0, viewport.offsetTop));
+    update();
+    viewport.addEventListener('resize', update);
+    viewport.addEventListener('scroll', update);
+    return () => {
+      viewport.removeEventListener('resize', update);
+      viewport.removeEventListener('scroll', update);
+    };
+  }, []);
 
   // Prevent hydration mismatch — cart count comes from localStorage
   useEffect(() => {
@@ -71,7 +86,7 @@ export function Header() {
   };
 
   return (
-    <header className="fixed inset-x-0 top-0 z-40 w-full border-b border-border bg-card/95 text-foreground shadow-sm backdrop-blur-md">
+    <header style={{ top: viewportTop }} className="fixed inset-x-0 top-0 z-40 w-full border-b border-border bg-card/95 text-foreground shadow-sm backdrop-blur-md">
       <div className="border-b border-border bg-secondary text-muted-foreground">
         <div className="container flex h-8 items-center justify-between text-xs">
           <div className="flex items-center gap-2">

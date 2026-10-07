@@ -60,6 +60,31 @@ describe('browser session lifecycle', () => {
     expect(fetchMock).toHaveBeenCalledWith('/api/auth/session', expect.objectContaining({ cache: 'no-store', credentials: 'include' }));
   });
 
+  it('keeps the header anchored when the keyboard pans the visual viewport', async () => {
+    const original = Object.getOwnPropertyDescriptor(window, 'visualViewport');
+    const viewport = new EventTarget() as EventTarget & { offsetTop: number };
+    viewport.offsetTop = 0;
+    Object.defineProperty(window, 'visualViewport', { configurable: true, value: viewport });
+    try {
+      await act(async () => root.render(<SessionProvider><Header /></SessionProvider>));
+      const header = container.querySelector('header')!;
+      expect(header.style.top).toBe('0px');
+      await act(async () => {
+        viewport.offsetTop = 180;
+        viewport.dispatchEvent(new Event('scroll'));
+      });
+      expect(header.style.top).toBe('180px');
+      await act(async () => {
+        viewport.offsetTop = 0;
+        viewport.dispatchEvent(new Event('resize'));
+      });
+      expect(header.style.top).toBe('0px');
+    } finally {
+      if (original) Object.defineProperty(window, 'visualViewport', original);
+      else delete (window as any).visualViewport;
+    }
+  });
+
   it('opens the side menu without focusing search and shows the requested links', async () => {
     await act(async () => root.render(<SessionProvider><Header /></SessionProvider>));
     await act(async () => {
