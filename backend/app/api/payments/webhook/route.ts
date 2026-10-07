@@ -1,16 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-import crypto from 'crypto';
+import { verifyPaystackSignature } from '@/lib/paystack/signature';
 import { db } from '@/lib/firebase/admin';
 import { verifyPaystackTransaction } from '@/lib/paystack/client';
 import { settleVerifiedPayment } from '@/lib/paystack/settlement';
 import { triggerOrderNotifications } from '@/lib/notifications';
 
-export function verifyPaystackSignature(body: string, signature: string): boolean {
-  const secret = process.env.PAYSTACK_SECRET_KEY;
-  if (!secret || !/^[a-f0-9]{128}$/i.test(signature)) return false;
-  const expected = crypto.createHmac('sha512', secret).update(body).digest();
-  return crypto.timingSafeEqual(expected, Buffer.from(signature, 'hex'));
-}
 export async function POST(request: NextRequest) {
   const raw = await request.text();
   if (!verifyPaystackSignature(raw, request.headers.get('x-paystack-signature') || '')) return NextResponse.json({ error: 'Invalid signature' }, { status: 400 });
