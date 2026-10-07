@@ -1,4 +1,5 @@
 'use client';
+import { ProfileAvatar } from '@/components/shared/ProfilePicture';
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -129,9 +130,7 @@ export function AdminSidebar({ adminEmail, mobileOpen, onMobileClose }: AdminSid
           )}
           title={collapsed ? 'Admin profile' : undefined}
         >
-          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary/10 text-sm font-semibold text-primary">
-            {adminEmail?.charAt(0).toUpperCase() ?? <UserRound className="h-4 w-4" />}
-          </span>
+          <ProfileAvatar />
           {!collapsed && (
             <span className="min-w-0 flex-1">
               <span className="block font-medium">Admin profile</span>

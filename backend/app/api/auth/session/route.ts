@@ -7,7 +7,7 @@ export const dynamic = 'force-dynamic';
 const headers = { 'Cache-Control': 'no-store' };
 async function sessionData(decoded: { uid: string; email?: string }) {
   const user = await db.collection('users').doc(decoded.uid).get();
-  return { uid: decoded.uid, email: decoded.email, role: user.data()?.role === 'admin' ? 'admin' : 'customer' };
+  return { uid: decoded.uid, email: decoded.email, role: user.data()?.role === 'admin' ? 'admin' : 'customer', ...(user.data()?.photo_url ? { photo_url: user.data()?.photo_url } : {}) };
 }
 export async function GET() {
   const token = cookies().get('session')?.value;

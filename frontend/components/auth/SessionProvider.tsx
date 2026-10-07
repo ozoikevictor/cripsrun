@@ -4,13 +4,14 @@ import { createContext, useCallback, useContext, useEffect, useRef, useState } f
 import { usePathname } from 'next/navigation';
 import { apiUrl } from '@/lib/api';
 
-interface Session { uid: string; email?: string; role: 'customer' | 'admin'; }
+interface Session { uid: string; email?: string; role: 'customer' | 'admin'; photo_url?: string; }
 type Status = 'loading' | 'authenticated' | 'guest';
 interface SessionContextValue {
   session: Session | null;
   status: Status;
   loggingOut: boolean;
   logout: () => Promise<void>;
+  refresh: (block?: boolean) => Promise<void>;
 }
 const SessionContext = createContext<SessionContextValue | null>(null);
 const LOGOUT_KEY = 'crisprun-logout-at';
@@ -93,7 +94,7 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
     };
   }, [refresh]);
 
-  return <SessionContext.Provider value={{ session, status, loggingOut, logout }}>
+  return <SessionContext.Provider value={{ session, status, loggingOut, logout, refresh }}>
     {verificationError && <div role="alert" className="bg-amber-950 px-4 py-3 text-sm text-white">
       Unable to check your account. Your session has not been cleared. <button onClick={() => void refresh()} className="underline">Retry</button>
     </div>}

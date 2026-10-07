@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { apiUrl } from '@/lib/api';
+import { ProfilePictureEditor } from '@/components/shared/ProfilePicture';
 import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
 import { ShieldCheck, UserRound } from 'lucide-react';
@@ -46,6 +47,7 @@ export default function AdminProfilePage() {
         <p role="alert" className="rounded-md border border-destructive/30 bg-destructive/5 p-4 text-sm text-destructive">{error}</p>
       ) : (
         <Card className="divide-y">
+          <div className="p-5"><ProfilePictureEditor /></div>
           <div className="flex items-center gap-4 p-5">
             <span className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary">
               <UserRound className="h-6 w-6" />

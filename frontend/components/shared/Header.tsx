@@ -1,4 +1,5 @@
 'use client';
+import { ProfileAvatar } from '@/components/shared/ProfilePicture';
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -163,6 +164,7 @@ export function Header() {
             <NotificationBell enabled={sessionStatus === 'authenticated'} />
           </div>
 
+          {sessionStatus === 'authenticated' && <Link href="/account" aria-label="My profile" className="md:hidden"><ProfileAvatar className="h-8 w-8" /></Link>}
           <div className="relative hidden md:block">
             <button
               type="button"
@@ -176,7 +178,7 @@ export function Header() {
                 if (event.key === 'Escape') setAccountMenuOpen(false);
               }}
             >
-              <UserRound className="h-5 w-5 shrink-0" />
+              <ProfileAvatar className="h-7 w-7" />
               <span className="min-w-0 flex-1 truncate text-left">
                 {sessionStatus === 'authenticated' && session?.email ? session.email.split('@')[0] : 'Account'}
               </span>

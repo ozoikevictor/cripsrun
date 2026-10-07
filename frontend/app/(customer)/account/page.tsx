@@ -1,6 +1,7 @@
 'use client';
 
 import { apiUrl } from '@/lib/api';
+import { ProfilePictureEditor } from '@/components/shared/ProfilePicture';
 
 
 import { useEffect, useState } from 'react';
@@ -152,6 +153,7 @@ export default function AccountPage() {
         {/* Profile Card */}
         <div className="rounded-lg border bg-card text-card-foreground p-4 sm:p-6 space-y-4">
           {error && <p role="alert" className="text-sm text-red-700">{error}</p>}
+          <ProfilePictureEditor />
           <div className="flex items-center justify-between">
             <h2 className="font-semibold flex items-center gap-2">
               <User className="h-4 w-4" />

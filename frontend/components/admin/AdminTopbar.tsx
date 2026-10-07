@@ -1,4 +1,5 @@
 'use client';
+import { ProfileAvatar } from '@/components/shared/ProfilePicture';
 
 import { FormEvent, useEffect, useState } from 'react';
 import Link from 'next/link';
@@ -179,6 +180,7 @@ export function AdminTopbar({ adminEmail, menuOpen, onMenuToggle }: AdminTopbarP
 
         {adminEmail && (
           <Link href="/admin/profile" className="hidden max-w-52 items-center gap-2 truncate rounded-md px-2 py-2 text-sm text-muted-foreground hover:bg-muted md:flex">
+            <ProfileAvatar className="h-7 w-7" />
             <Shield className="h-4 w-4 shrink-0 text-primary" />
             {adminEmail}
           </Link>
