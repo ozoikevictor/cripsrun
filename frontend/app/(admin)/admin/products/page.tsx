@@ -1,6 +1,7 @@
 'use client';
 
 import { apiUrl } from '@/lib/api';
+import { DeliveryDaysEditor } from '@/components/admin/DeliveryDaysEditor';
 
 
 import { useEffect, useMemo, useState } from 'react';
@@ -613,6 +614,7 @@ export default function AdminProductsPage() {
             </div>
 
             <div className="space-y-2">
+              {editingProductId && form.product_type === 'PERISHABLE' && <DeliveryDaysEditor key={editingProductId} productId={editingProductId} />}
               <Label htmlFor="price-per-kg">Price per kg (NGN)</Label>
               <Input
                   id="price-per-kg"

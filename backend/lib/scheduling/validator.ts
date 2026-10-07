@@ -25,14 +25,14 @@ export async function validateDeliveryDate(
   const { db } = await import('@/lib/firebase/admin');
 
   const deliveryDate = new Date(deliveryDateISO);
-  const deliveryDayOfWeek = deliveryDate.getDay(); // 0=Sun, 6=Sat
+  if (!Number.isFinite(deliveryDate.getTime())) return { valid: false, error: 'Invalid delivery date.' };
+  const calendarDay = lagosDate(deliveryDate);
+  const deliveryDayOfWeek = new Date(`${calendarDay}T12:00:00Z`).getUTCDay();
   const now = new Date();
 
   // ── Minimum 24h lead time ─────────────────────────────────────────────────
-  const today = new Date(now);
-  today.setHours(0, 0, 0, 0);
-  const selectedDay = new Date(deliveryDate);
-  selectedDay.setHours(0, 0, 0, 0);
+  const today = new Date(`${lagosDate(now)}T00:00:00+01:00`);
+  const selectedDay = new Date(`${calendarDay}T00:00:00+01:00`);
 
   if (selectedDay < today) {
     return {
@@ -84,8 +84,7 @@ export async function validateDeliveryDate(
     const cutoffHours = dayConfig.cutoff_hours as number;
 
     // Cutoff = midnight of delivery day minus cutoff_hours
-    const deliveryMidnight = new Date(deliveryDate);
-    deliveryMidnight.setHours(0, 0, 0, 0);
+    const deliveryMidnight = selectedDay;
     const cutoffTime = new Date(deliveryMidnight.getTime() - cutoffHours * 60 * 60 * 1000);
 
     if (now >= cutoffTime) {
@@ -105,5 +104,12 @@ function formatCutoffTime(date: Date): string {
     hour: '2-digit',
     minute: '2-digit',
     hour12: true,
+    timeZone: 'Africa/Lagos',
   });
+}
+
+function lagosDate(date: Date) {
+  const parts = new Intl.DateTimeFormat('en', { timeZone: 'Africa/Lagos', year: 'numeric', month: '2-digit', day: '2-digit' }).formatToParts(date);
+  const value = (type: string) => parts.find(part => part.type === type)!.value;
+  return `${value('year')}-${value('month')}-${value('day')}`;
 }

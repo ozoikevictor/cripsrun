@@ -5,6 +5,7 @@
  */
 
 import { cookies } from 'next/headers';
+import { verifySessionCookie } from './cookie';
 
 export interface SessionUser {
   uid: string;
@@ -37,8 +38,7 @@ export async function getServerSession(): Promise<SessionUser | null> {
   if (!sessionCookie) return null;
 
   try {
-    const { auth } = await import('@/lib/firebase/admin');
-    const decoded = await auth.verifyIdToken(sessionCookie);
+    const decoded = await verifySessionCookie(sessionCookie);
     const role = await getRoleFromFirestore(decoded.uid);
 
     return {

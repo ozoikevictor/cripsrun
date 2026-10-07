@@ -21,22 +21,25 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
   const [status, setStatus] = useState<Status>('loading');
   const [loggingOut, setLoggingOut] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [verificationError, setVerificationError] = useState(false);
   const revision = useRef(0);
   const logoutPending = useRef(false);
 
-  const refresh = useCallback(async () => {
+  const refresh = useCallback(async (block = false) => {
     if (logoutPending.current) return;
     const current = ++revision.current;
-    setStatus('loading');
+    setStatus(current => block || current !== 'authenticated' ? 'loading' : current);
     try {
       const response = await fetch(apiUrl('/api/auth/session'), { credentials: 'include', cache: 'no-store' });
+      if (!response.ok && response.status !== 401) throw new Error('Account check unavailable');
       const payload = await response.json();
       if (current !== revision.current) return;
       const user = response.ok && payload.success ? payload.data : null;
       setSession(user);
       setStatus(user ? 'authenticated' : 'guest');
+      setVerificationError(false);
     } catch {
-      if (current === revision.current) { setSession(null); setStatus('guest'); }
+      if (current === revision.current) { setStatus('loading'); setVerificationError(true); }
     }
   }, []);
 
@@ -71,7 +74,8 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
   }, [pathname, refresh]);
 
   useEffect(() => {
-    const pageShow = (event: PageTransitionEvent) => { if (event.persisted) void refresh(); };
+    const pageShow = (event: PageTransitionEvent) => { if (event.persisted) void refresh(true); };
+    const focus = () => { void refresh(); };
     const storage = (event: StorageEvent) => {
       if (event.key === LOGOUT_KEY) {
         revision.current++;
@@ -80,16 +84,19 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
       }
     };
     window.addEventListener('pageshow', pageShow);
-    window.addEventListener('focus', refresh);
+    window.addEventListener('focus', focus);
     window.addEventListener('storage', storage);
     return () => {
       window.removeEventListener('pageshow', pageShow);
-      window.removeEventListener('focus', refresh);
+      window.removeEventListener('focus', focus);
       window.removeEventListener('storage', storage);
     };
   }, [refresh]);
 
   return <SessionContext.Provider value={{ session, status, loggingOut, logout }}>
+    {verificationError && <div role="alert" className="bg-amber-950 px-4 py-3 text-sm text-white">
+      Unable to check your account. Your session has not been cleared. <button onClick={() => void refresh()} className="underline">Retry</button>
+    </div>}
     {error && <div role="alert" className="bg-red-950 px-4 py-3 text-sm text-white">
       {error} <button onClick={logout} className="underline">Retry logout</button>
     </div>}

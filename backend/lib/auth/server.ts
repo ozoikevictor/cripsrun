@@ -76,5 +76,10 @@ export async function authenticateRequest(
 ): Promise<VerifiedUser | null> {
   const token = getTokenFromHeaders(headers);
   if (!token) return null;
-  return verifyToken(token);
+  if (headers.get('Authorization')?.startsWith('Bearer ')) return verifyToken(token);
+  try {
+    const { verifySessionCookie } = await import('./cookie');
+    const decoded = await verifySessionCookie(token);
+    return { uid: decoded.uid, email: decoded.email, role: await getRoleFromFirestore(decoded.uid) };
+  } catch { return null; }
 }

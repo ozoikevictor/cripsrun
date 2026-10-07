@@ -65,11 +65,12 @@ export default function CheckoutPage() {
 
   const canProceed = () => {
     if (step === 1) return address.trim().length > 5;
-    if (step === 2) return deliveryDate !== '';
+    if (step === 2) return deliveryConfig.isDateAvailable(deliveryDate);
     return true;
   };
 
   const handleCheckout = async () => {
+    if (!deliveryConfig.isDateAvailable(deliveryDate)) { setError('Please choose an available delivery date.'); setStep(2); return; }
     setIsSubmitting(true);
     setError(null);
 
@@ -80,6 +81,7 @@ export default function CheckoutPage() {
       });
 
       if (!sessionResponse.ok) {
+        if (sessionResponse.status !== 401) throw new Error('Unable to verify your account. Please try again.');
         localStorage.removeItem('crisprun-session-present');
         router.replace('/login?from=/checkout');
         return;
@@ -182,7 +184,10 @@ export default function CheckoutPage() {
                 <h2 className="text-lg font-semibold">Delivery Date</h2>
               </div>
 
-              {deliveryConfig.deliveryType === 'MUST_SPLIT' && (
+              {deliveryConfig.loading && <p role="status">Checking delivery availability...</p>}
+              {deliveryConfig.scheduleError && <p role="alert" className="text-sm text-red-700">{deliveryConfig.scheduleError}</p>}
+              {deliveryDate && !deliveryConfig.loading && !deliveryConfig.scheduleError && !deliveryConfig.isDateAvailable(deliveryDate) && <p role="alert" className="text-sm text-red-700">This date is unavailable or its ordering cutoff has passed. Choose another date.</p>}
+              {!deliveryConfig.scheduleError && !deliveryConfig.loading && deliveryConfig.deliveryType === 'MUST_SPLIT' && (
                 <div className="p-3 rounded-lg bg-amber-50 border border-amber-200 text-sm text-amber-800 dark:bg-amber-950 dark:border-amber-800 dark:text-amber-200">
                   Your perishable items have incompatible delivery days.
                   Please remove some items or split your order.
@@ -285,7 +290,7 @@ export default function CheckoutPage() {
                 size="lg"
                 className="w-full text-base"
                 onClick={handleCheckout}
-                disabled={isSubmitting}
+                disabled={isSubmitting || deliveryConfig.loading || !!deliveryConfig.scheduleError}
               >
                 {isSubmitting ? 'Processing...' : `Place Order`}
               </Button>

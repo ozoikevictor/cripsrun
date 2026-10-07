@@ -39,7 +39,7 @@ export function Footer() {
               >
                 My Orders
               </Link>
-              {isLoggedIn ? (
+              {status === 'loading' ? <span role="status" className="text-sm text-crisp-100/80">Checking account...</span> : isLoggedIn ? (
                 <button
                   type="button"
                   className="text-left text-sm text-crisp-100/80 transition-colors hover:text-white"

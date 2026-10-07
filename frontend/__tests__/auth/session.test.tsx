@@ -12,7 +12,7 @@ jest.mock('@/store/cart.store', () => ({ useCartStore: (select: any) => select({
 jest.mock('@/store/ui.store', () => ({ useUIStore: (select: any) => select({ openCart: () => {} }) }));
 
 const admin = { uid: 'admin-test', email: 'admin@example.test', role: 'admin' };
-const reply = (data: unknown, ok = true) => ({ ok, json: async () => ({ success: ok, data }) });
+const reply = (data: unknown, ok = true) => ({ ok, status: ok ? 200 : 401, json: async () => ({ success: ok, data }) });
 function deferred() {
   let resolve!: (value: unknown) => void;
   const promise = new Promise((done) => { resolve = done; });
@@ -58,6 +58,38 @@ describe('browser session lifecycle', () => {
     await render();
     expect(container.querySelector('[data-status]')?.textContent).toBe('guest:none');
     expect(fetchMock).toHaveBeenCalledWith('/api/auth/session', expect.objectContaining({ cache: 'no-store', credentials: 'include' }));
+  });
+
+  it('keeps a neutral state until the first account check completes', async () => {
+    const pending = deferred();
+    fetchMock.mockReturnValueOnce(pending.promise);
+    await render();
+    expect(container.querySelector('[data-status]')?.textContent).toBe('loading:none');
+    await act(async () => pending.resolve(reply(admin)));
+    expect(container.querySelector('[data-status]')?.textContent).toBe('authenticated:admin');
+  });
+
+  it.each(['network', 'service'])('does not turn a temporary %s failure into logout', async failure => {
+    fetchMock.mockResolvedValueOnce(reply(admin));
+    await render();
+    if (failure === 'network') fetchMock.mockRejectedValueOnce(new Error('Offline'));
+    else fetchMock.mockResolvedValueOnce({ ok: false, status: 503 });
+    await act(async () => window.dispatchEvent(new Event('focus')));
+    expect(container.querySelector('[data-status]')?.textContent).toBe('loading:admin');
+    expect(container.querySelector('[role="alert"]')?.textContent).toContain('session has not been cleared');
+    expect(localStorage.getItem('crisprun-logout-at')).toBeNull();
+  });
+
+  it('keeps verified checkout content mounted during ordinary background checks', async () => {
+    mockPath = '/checkout';
+    fetchMock.mockResolvedValueOnce(reply(admin));
+    await render();
+    const pending = deferred();
+    fetchMock.mockReturnValueOnce(pending.promise);
+    await act(async () => window.dispatchEvent(new Event('focus')));
+    expect(container.querySelector('[data-private]')).not.toBeNull();
+    expect(container.querySelector('[data-status]')?.textContent).toBe('authenticated:admin');
+    await act(async () => pending.resolve(reply(admin)));
   });
 
   it('clears the UI immediately and ignores an older session response during logout', async () => {

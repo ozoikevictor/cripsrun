@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
+import { createSessionCookie } from '@/lib/auth/cookie';
 
 const RegisterSchema = z.object({
   fullName: z.string().min(2, 'Full name is required'),
-  email: z.string().email('Valid email is required'),
+  email: z.string().trim().email('Valid email is required'),
   phone: z.string().min(7, 'Phone number is required'),
   password: z.string().min(6, 'Password must be at least 6 characters'),
 });
@@ -92,7 +93,7 @@ export async function POST(request: NextRequest) {
       { status: 201 }
     );
 
-    response.cookies.set('session', authPayload.idToken, {
+    response.cookies.set('session', await createSessionCookie(authPayload.idToken), {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
